@@ -13,7 +13,7 @@
     "tauri": "tauri",
     "tauri:dev": "cross-env RUST_LOG=debug tauri dev",
     "tauri:build": "tauri build",
-    "dev": "cross-env NODE_ENV=development vite",
+    "dev": "cross-env NODE_ENV=development vite --force",
     "build": "cross-env NODE_ENV=production tsc && vite build",
     "lint": "prettier --check src/**/*.{ts,tsx} && eslint --ext .ts,.tsx --ignore-path .gitignore .",
     "lint:fix": "prettier --write src/**/*.{ts,tsx} && eslint --fix --ext .ts,.tsx --ignore-path .gitignore ."

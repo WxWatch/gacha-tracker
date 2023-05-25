@@ -205,9 +205,9 @@ const KnownCategoryTitles: Record<
   },
   [AccountFacet.StarRail]: {
     character: "Character",
-    weapon: "Weapon",
-    permanent: "Permanent",
-    newbie: "Newbie",
+    weapon: "Light Cone",
+    permanent: "Regular",
+    newbie: "Starter",
   },
 };
 
@@ -245,7 +245,8 @@ function computeNamedGachaRecords(
   const { action: currencyAction } = resolveCurrency(facet);
 
   return Object.entries(categories).reduce((acc, [gachaType, category]) => {
-    const categoryTitle = KnownCategoryTitles[facet][category] + currencyAction;
+    const categoryTitle =
+      KnownCategoryTitles[facet][category] + " " + currencyAction;
     const data = concatNamedGachaRecordsValues(
       facet,
       values,
