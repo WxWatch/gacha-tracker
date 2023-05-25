@@ -3,9 +3,10 @@ import { AccountFacet, resolveCurrency } from "@/interfaces/account";
 import { GachaRecords, NamedGachaRecords } from "@/hooks/useGachaRecordsQuery";
 import { useGachaLayoutContext } from "@/components/gacha/GachaLayoutContext";
 import { SxProps, Theme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import dayjs from "dayjs";
@@ -36,6 +37,7 @@ export default function GachaOverviewGrid() {
             newbie={newbie}
           />
         </Grid>
+        <Card>Hi</Card>
       </Grid>
     </Box>
   );
@@ -56,10 +58,10 @@ function GachaOverviewGridCard({
     lastTime,
     metadata: { golden },
   } = value;
-  const { currency } = resolveCurrency(facet);
+  const { currency, action } = resolveCurrency(facet);
   const category = "category" in value ? value.category : "aggregated";
   const categoryTitle =
-    "categoryTitle" in value ? value.categoryTitle : "total";
+    "categoryTitle" in value ? value.categoryTitle : "Total";
 
   const lastGolden = golden.values[golden.values.length - 1];
   const lastGoldenName = lastGolden
@@ -70,7 +72,7 @@ function GachaOverviewGridCard({
   const newbieGoldenName = newbieGolden && `${newbieGolden.name}`;
 
   return (
-    <Stack sx={GachaOverviewGridCardSx}>
+    <Card sx={GachaOverviewGridCardSx}>
       <Box className="category">
         <Typography component="div" variant="body2">
           {categoryTitle}
@@ -80,7 +82,7 @@ function GachaOverviewGridCard({
         <Typography component="div" variant="h4">
           {categoryTitle}
           {category === "aggregated" && (
-            <Typography variant="button">(including novices)</Typography>
+            <Typography variant="button">&nbsp;(including novices)</Typography>
           )}
         </Typography>
         <Typography component="div" variant="caption">
@@ -91,12 +93,9 @@ function GachaOverviewGridCard({
       </Box>
       <Stack className="labels">
         <Stack>
-          <Chip label={`common ${total} smoke`} color="primary" />
+          <Chip label={`Total ${action}: ${total}`} color="primary" />
           {category !== "aggregated" ? (
-            <Chip
-              label={`has been padded ${golden.nextPity} smoke`}
-              color="secondary"
-            />
+            <Chip label={`Next Pity: ${golden.nextPity}`} color="secondary" />
           ) : (
             newbieGoldenName && (
               <Chip label={`Novice: ${newbieGoldenName}`} color="warning" />
@@ -105,17 +104,17 @@ function GachaOverviewGridCard({
           <Chip label={`Been out ${golden.sum} money`} color="warning" />
         </Stack>
         <Stack>
-          <Chip label={`Recent withdrawals: ${lastGoldenName}`} />
-          <Chip label={`Withdrawal rate ${golden.sumPercentage}%`} />
+          <Chip label={`Last 5*: ${lastGoldenName}`} />
+          <Chip label={`5* Rate: ${golden.sumPercentage}%`} />
         </Stack>
         <Stack>
-          <Chip label={`average per gold ${golden.sumAverage} smoke`} />
+          <Chip label={`Avg. wishes per 5*: ${golden.sumAverage} `} />
           <Chip
-            label={`average per gold ${golden.sumAverage * 160} ${currency}`}
+            label={`Avg. ${currency} spent per 5*: ${golden.sumAverage * 160}`}
           />
         </Stack>
       </Stack>
-    </Stack>
+    </Card>
   );
 }
 

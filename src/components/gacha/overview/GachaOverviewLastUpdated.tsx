@@ -1,12 +1,10 @@
 import React from "react";
-import { resolveCurrency } from "@/interfaces/account";
 import { useGachaLayoutContext } from "@/components/gacha/GachaLayoutContext";
 import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 
 export default function GachaOverviewLastUpdated() {
-  const { facet, selectedAccount } = useGachaLayoutContext();
-  const { action } = resolveCurrency(facet);
+  const { selectedAccount } = useGachaLayoutContext();
   const lastGachaUpdated = selectedAccount.properties?.lastGachaUpdated;
 
   return (
@@ -14,11 +12,11 @@ export default function GachaOverviewLastUpdated() {
       <Typography
         component="span"
         variant="inherit"
-      >{`recently ${action} date of record update:`}</Typography>
+      >{`Last updated: `}</Typography>
       <Typography component="span" variant="inherit">
         {lastGachaUpdated
           ? dayjs(lastGachaUpdated).format("YYYY.MM.DD HH:mm:ss")
-          : "none"}
+          : "unknown"}
       </Typography>
     </Typography>
   );

@@ -98,7 +98,7 @@ export default function GachaActionFetch() {
         onClick={handleFetch}
         disabled={busy}
       >
-        {`renew${action}`}
+        {`Fetch ${action}`}
       </Button>
       {busy && (
         <Backdrop
