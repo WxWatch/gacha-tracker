@@ -71,6 +71,21 @@ function GachaOverviewGridCard({
   const newbieGolden = newbie && newbie.metadata.golden.values[0];
   const newbieGoldenName = newbieGolden && `${newbieGolden.name}`;
 
+  if (total === 0) {
+    return (
+      <Card sx={GachaOverviewGridCardSx}>
+        <Box className="category">
+          <Typography component="div" variant="body2">
+            {categoryTitle}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>No data available</Typography>
+        </Box>
+      </Card>
+    );
+  }
+
   return (
     <Card sx={GachaOverviewGridCardSx}>
       <Box className="category">
