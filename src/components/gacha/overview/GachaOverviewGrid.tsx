@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import dayjs from "dayjs";
+import CardContent from "@mui/material/CardContent";
 
 export default function GachaOverviewGrid() {
   const { facet, gachaRecords } = useGachaLayoutContext();
@@ -56,7 +57,7 @@ function GachaOverviewGridCard({
     total,
     firstTime,
     lastTime,
-    metadata: { golden },
+    metadata: { golden, purple },
   } = value;
   const { currency, action } = resolveCurrency(facet);
   const category = "category" in value ? value.category : "aggregated";
@@ -67,6 +68,9 @@ function GachaOverviewGridCard({
   const lastGoldenName = lastGolden
     ? `${lastGolden.name}（${lastGolden.usedPity}）`
     : "none";
+
+  const lastPurple = purple.values[purple.values.length - 1];
+  const lastPurpleName = lastPurple ? `${lastPurple.name} ` : "none";
 
   const newbieGolden = newbie && newbie.metadata.golden.values[0];
   const newbieGoldenName = newbieGolden && `${newbieGolden.name}`;
@@ -108,9 +112,9 @@ function GachaOverviewGridCard({
       </Box>
       <Stack className="labels">
         <Stack>
-          <Chip label={`Total ${action}: ${total}`} color="primary" />
+          <Chip label={`Lifetime ${action.plural}: ${total}`} color="primary" />
           {category !== "aggregated" ? (
-            <Chip label={`Next Pity: ${golden.nextPity}`} color="secondary" />
+            <Chip label={`5★ Pity: ${golden.nextPity}`} color="secondary" />
           ) : (
             newbieGoldenName && (
               <Chip label={`Novice: ${newbieGoldenName}`} color="warning" />
@@ -119,16 +123,29 @@ function GachaOverviewGridCard({
           <Chip label={`Been out ${golden.sum} money`} color="warning" />
         </Stack>
         <Stack>
-          <Chip label={`Last 5*: ${lastGoldenName}`} />
-          <Chip label={`5* Rate: ${golden.sumPercentage}%`} />
+          <Chip label={`Last 5★: ${lastGoldenName}`} />
+          <Chip label={`5★ Rate: ${golden.sumPercentage}%`} />
         </Stack>
         <Stack>
-          <Chip label={`Avg. wishes per 5*: ${golden.sumAverage} `} />
+          <Chip label={`Avg. wishes per 5★: ${golden.sumAverage} `} />
           <Chip
-            label={`Avg. ${currency} spent per 5*: ${golden.sumAverage * 160}`}
+            label={`Avg. ${currency} spent per 5★: ${golden.sumAverage * 160}`}
           />
         </Stack>
+        <Stack>
+          <Chip label={`Last 4★: ${lastPurpleName}`} />
+          <Chip label={`4★ Rate: ${purple.sumPercentage}%`} />
+        </Stack>
+        {/* <Stack>
+          <Chip label={`Avg. wishes per 4★: ${purple.sumAverage} `} />
+          <Chip
+            label={`Avg. ${currency} spent per 4★: ${purple.sumAverage * 160}`}
+          />
+        </Stack> */}
       </Stack>
+      <Card>
+        <CardContent>4★ Rate</CardContent>
+      </Card>
     </Card>
   );
 }
