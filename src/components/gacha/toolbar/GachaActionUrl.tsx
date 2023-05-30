@@ -68,8 +68,8 @@ export default function GachaActionUrl() {
       <TextField
         variant="outlined"
         size="small"
-        label={`${action} URL`}
-        placeholder={`${action} URL`}
+        label={`${action.singular} URL`}
+        placeholder={`${action.singular} URL`}
         value={selectedAccount.gachaUrl || ""}
         sx={{ maxWidth: 200 }}
         InputProps={{

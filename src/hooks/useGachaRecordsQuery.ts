@@ -246,7 +246,7 @@ function computeNamedGachaRecords(
 
   return Object.entries(categories).reduce((acc, [gachaType, category]) => {
     const categoryTitle =
-      KnownCategoryTitles[facet][category] + " " + currencyAction;
+      KnownCategoryTitles[facet][category] + " " + currencyAction.singular;
     const data = concatNamedGachaRecordsValues(
       facet,
       values,
