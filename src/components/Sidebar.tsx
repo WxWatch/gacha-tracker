@@ -9,11 +9,11 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Button, { ButtonTypeMap } from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import HomeIcon from "@mui/icons-material/Home";
 import SettingsIcon from "@mui/icons-material/Settings";
-import LogoSrc from "@/assets/images/Logo.png";
+import LogoSrc from "@/assets/images/Logo.webp";
 import StarRailLogoSrc from "@/assets/images/starrail/starrail-icon.jpeg";
 import GenshinLogoSrc from "@/assets/images/genshin/genshin-icon.jpeg";
+import PaimonTreasureSrc from "@/assets/images/Paimon.png";
 
 export const SidebarWidth = "96px";
 
@@ -58,7 +58,7 @@ export default function Sidebar() {
 type Nav = { title: string; href: string; icon?: React.ReactNode };
 
 const Navs: Nav[] = [
-  { title: "Home", href: "/", icon: <HomeIcon /> },
+  { title: "Home", href: "/", icon: <GameIcon src={PaimonTreasureSrc} /> },
   {
     title: "Genshin Impact",
     href: "/genshin",
