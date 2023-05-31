@@ -19,7 +19,6 @@ use std::path::PathBuf;
 use tauri::plugin::{Builder as TauriPluginBuilder, TauriPlugin};
 use time::format_description;
 use time::{OffsetDateTime, UtcOffset};
-use tracing::debug;
 
 /// Tauri commands
 
@@ -49,8 +48,6 @@ async fn find_gacha_url(
                 .await?
         }
     };
-
-    debug!("{}", gacha_url.to_string());
 
     Ok(gacha_url.to_string())
 }

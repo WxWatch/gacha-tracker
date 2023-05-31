@@ -117,7 +117,7 @@ export default function GachaLayout() {
           0: <GachaOverview />,
           1: <GachaAnalysis />,
           2: <GachaChart />,
-          3: <GachaOverview />,
+          3: <iframe src="https://wiki.hoyolab.com/pc/hsr/home" />,
         }[tab]
       }
     </GachaLayoutContext.Provider>
