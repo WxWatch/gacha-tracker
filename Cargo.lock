@@ -3508,7 +3508,7 @@ checksum = "d42ba3a2e8556722f31336a0750c10dbb6a81396a1c452977f515da83f69f842"
 dependencies = [
  "anyhow",
  "attohttpc",
- "base64 0.21.0",
+ "base64 0.21.2",
  "cocoa",
  "dirs-next",
  "embed_plist",
