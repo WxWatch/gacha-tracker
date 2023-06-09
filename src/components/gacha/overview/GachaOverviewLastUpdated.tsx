@@ -14,9 +14,7 @@ export default function GachaOverviewLastUpdated() {
         variant="inherit"
       >{`Last updated: `}</Typography>
       <Typography component="span" variant="inherit">
-        {lastGachaUpdated
-          ? dayjs(lastGachaUpdated).format("MMM DD, YYYY HH:mm:ss")
-          : "unknown"}
+        {lastGachaUpdated ? dayjs(lastGachaUpdated).format("LLLL") : "unknown"}
       </Typography>
     </Typography>
   );
