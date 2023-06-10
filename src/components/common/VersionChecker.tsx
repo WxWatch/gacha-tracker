@@ -1,11 +1,11 @@
-import React from "react";
-import { dialog, process } from "@tauri-apps/api";
-import { useVersion, useLatestVersion } from "@/components/common/useVersion";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import DownloadIcon from "@mui/icons-material/Download";
-import invoke from "@/utilities/invoke";
-import dayjs from "@/utilities/dayjs";
+import React from 'react'
+import { dialog, process } from '@tauri-apps/api'
+import { useVersion, useLatestVersion, CurrentVersion, LatestVersion } from '@/components/common/useVersion'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import DownloadIcon from '@mui/icons-material/Download'
+import invoke from '@/utilities/invoke'
+import dayjs from '@/utilities/dayjs'
 
 export default function VersionChecker() {
   const version = useVersion();
@@ -56,16 +56,8 @@ export default function VersionChecker() {
       </Typography>
     );
 
-  // TODO: semver
-  const needUpdate = dayjs(version.data.date).isBefore(
-    latestVersion.data.created_at
-  );
-  if (!needUpdate)
-    return (
-      <Typography component="span" variant="body2" color="error">
-        You are on the latest version!
-      </Typography>
-    );
+  const needUpdate = isNeedUpdate(version.data, latestVersion.data)
+  if (!needUpdate) return <Typography component="span" variant="body2" color="error">已是最新版本</Typography>
 
   return (
     <Button
@@ -78,4 +70,22 @@ export default function VersionChecker() {
       {!busy ? "Update to new version" : "Download the latest version..."}
     </Button>
   );
+}
+
+function isNeedUpdate (
+  version: CurrentVersion,
+  latestVersion: LatestVersion | null
+): boolean {
+  if (!latestVersion) return false
+
+  // TODO: Strictly compare semver
+  const current = version.version
+  const latest = latestVersion.tag_name
+  const currentSemver = current.split('.').map(v => parseInt(v))
+  const latestSemver = latest.split('.').map(v => parseInt(v))
+  for (let i = 0; i < 3; i++) {
+    if (currentSemver[i] < latestSemver[i]) return true
+    if (currentSemver[i] > latestSemver[i]) return false
+  }
+  return false
 }
