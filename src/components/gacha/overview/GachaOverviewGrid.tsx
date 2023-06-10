@@ -42,7 +42,6 @@ export default function GachaOverviewGrid() {
             newbie={newbie}
           />
         </Grid>
-        <Card>Hi</Card>
       </Grid>
     </Box>
   );

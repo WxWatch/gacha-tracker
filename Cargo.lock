@@ -163,22 +163,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "attohttpc"
-version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fcf00bc6d5abb29b5f97e3c61a90b6d3caa12f3faf897d4a3e3607c050a35a7"
-dependencies = [
- "flate2",
- "http",
- "log",
- "native-tls",
- "serde",
- "serde_json",
- "serde_urlencoded",
- "url",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -989,6 +973,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "gacha_tracker"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "byteorder",
+ "form_urlencoded",
+ "futures",
+ "lazy_static",
+ "paste",
+ "reqwest",
+ "sea-orm",
+ "serde",
+ "serde_json",
+ "shadow-rs",
+ "sqlx-core",
+ "tauri",
+ "tauri-build",
+ "thiserror",
+ "time",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+]
+
+[[package]]
 name = "gdk"
 version = "0.15.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1373,33 +1384,6 @@ name = "hex"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
-
-[[package]]
-name = "hoyo_gacha"
-version = "0.3.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "byteorder",
- "form_urlencoded",
- "futures",
- "lazy_static",
- "paste",
- "reqwest",
- "sea-orm",
- "serde",
- "serde_json",
- "shadow-rs",
- "sqlx-core",
- "tauri",
- "tauri-build",
- "thiserror",
- "time",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "url",
-]
 
 [[package]]
 name = "html5ever"
@@ -1904,12 +1888,6 @@ name = "minimal-lexical"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a"
-
-[[package]]
-name = "minisign-verify"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "933dca44d65cdd53b355d0b73d380a2ff5da71f87f036053188bf1eab6a19881"
 
 [[package]]
 name = "miniz_oxide"
@@ -3507,8 +3485,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d42ba3a2e8556722f31336a0750c10dbb6a81396a1c452977f515da83f69f842"
 dependencies = [
  "anyhow",
- "attohttpc",
- "base64 0.21.2",
  "cocoa",
  "dirs-next",
  "embed_plist",
@@ -3521,7 +3497,6 @@ dependencies = [
  "heck 0.4.1",
  "http",
  "ignore",
- "minisign-verify",
  "objc",
  "once_cell",
  "open",
@@ -3545,14 +3520,12 @@ dependencies = [
  "tauri-utils",
  "tempfile",
  "thiserror",
- "time",
  "tokio",
  "url",
  "uuid",
  "webkit2gtk",
  "webview2-com",
  "windows 0.39.0",
- "zip",
 ]
 
 [[package]]
@@ -4701,15 +4674,4 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6d1526bbe5aaeb5eb06885f4d987bcdfa5e23187055de9b83fe00156a821fabc"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "zip"
-version = "0.6.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "760394e246e4c28189f19d488c058bf16f564016aefac5d32bb1f3b51d5e9261"
-dependencies = [
- "byteorder",
- "crc32fast",
- "crossbeam-utils",
 ]
