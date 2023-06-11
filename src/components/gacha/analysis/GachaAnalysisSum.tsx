@@ -21,7 +21,7 @@ export default function GachaAnalysisSum() {
       <Stack flexDirection="row" gap={2}>
         <GachaAnalysisSumCol
           title="Shipments / Rate"
-          values={["Five Star", "Four Star", "Samsung", "Total"]}
+          values={["Five Star", "Four Star", "Other", "Total"]}
         />
         <GachaAnalysisSumCol
           title={character.categoryTitle}
