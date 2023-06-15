@@ -12,7 +12,32 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 
-export default function GachaAnalysisHistory() {
+export default function GachaAnalysisHistories() {
+  return (
+    <>
+      <Box>
+        <GachaAnalysisHistory rank={5} />
+      </Box>
+      <Divider />
+      <Box>
+        <GachaAnalysisHistory rank={4} />
+      </Box>
+    </>
+  );
+}
+
+function rankMetadataForRecords(rank: number, records: NamedGachaRecords) {
+  switch (rank) {
+    case 4:
+      return records.metadata.purple;
+    case 5:
+      return records.metadata.golden;
+    default:
+      return records.metadata.golden;
+  }
+}
+
+function GachaAnalysisHistory({ rank }: { rank: number }) {
   const { facet, gachaRecords } = useGachaLayoutContext();
   const {
     namedValues: { character, weapon, permanent, newbie },
@@ -20,85 +45,49 @@ export default function GachaAnalysisHistory() {
 
   return (
     <>
-      <Box>
-        <Typography variant="h6" gutterBottom>
-          ❖ 5★ History
-        </Typography>
-        <Stack direction="column" spacing={2}>
+      <Typography variant="h6" gutterBottom>
+        ❖ {rank}★ History
+      </Typography>
+      <Stack direction="column" spacing={2}>
+        <GachaAnalysisHistoryList
+          facet={facet}
+          rank={rank}
+          categoryTitle={character.categoryTitle}
+          records={rankMetadataForRecords(rank, character)}
+        />
+        <GachaAnalysisHistoryList
+          facet={facet}
+          rank={rank}
+          categoryTitle={weapon.categoryTitle}
+          records={rankMetadataForRecords(rank, weapon)}
+        />
+        <GachaAnalysisHistoryList
+          facet={facet}
+          rank={rank}
+          categoryTitle={permanent.categoryTitle}
+          records={rankMetadataForRecords(rank, permanent)}
+        />
+        {rankMetadataForRecords(rank, newbie).sum > 0 && (
           <GachaAnalysisHistoryList
             facet={facet}
-            category={character.category}
-            categoryTitle={character.categoryTitle}
-            records={character.metadata.golden}
+            rank={rank}
+            categoryTitle={newbie.categoryTitle}
+            records={rankMetadataForRecords(rank, newbie)}
           />
-          <GachaAnalysisHistoryList
-            facet={facet}
-            category={weapon.category}
-            categoryTitle={weapon.categoryTitle}
-            records={weapon.metadata.golden}
-          />
-          <GachaAnalysisHistoryList
-            facet={facet}
-            category={permanent.category}
-            categoryTitle={permanent.categoryTitle}
-            records={permanent.metadata.golden}
-          />
-          {newbie.metadata.golden.sum > 0 && (
-            <GachaAnalysisHistoryList
-              facet={facet}
-              category={newbie.category}
-              categoryTitle={newbie.categoryTitle}
-              records={newbie.metadata.golden}
-            />
-          )}
-        </Stack>
-      </Box>
-      <Divider />
-      <Box>
-        <Typography variant="h6" gutterBottom>
-          ❖ 4★ History
-        </Typography>
-        <Stack direction="column" spacing={2}>
-          <GachaAnalysisHistoryList
-            facet={facet}
-            category={character.category}
-            categoryTitle={character.categoryTitle}
-            records={character.metadata.purple}
-          />
-          <GachaAnalysisHistoryList
-            facet={facet}
-            category={weapon.category}
-            categoryTitle={weapon.categoryTitle}
-            records={weapon.metadata.purple}
-          />
-          <GachaAnalysisHistoryList
-            facet={facet}
-            category={permanent.category}
-            categoryTitle={permanent.categoryTitle}
-            records={permanent.metadata.purple}
-          />
-          {newbie.metadata.purple.sum > 0 && (
-            <GachaAnalysisHistoryList
-              facet={facet}
-              category={newbie.category}
-              categoryTitle={newbie.categoryTitle}
-              records={newbie.metadata.purple}
-            />
-          )}
-        </Stack>
-      </Box>
+        )}
+      </Stack>
     </>
   );
 }
 
 function GachaAnalysisHistoryList({
   facet,
-  category,
+  rank,
   categoryTitle,
   records,
 }: {
   facet: AccountFacet;
-  category: string;
+  rank: number;
   categoryTitle: string;
   records: AdvancedGachaRecordsMetadata;
 }) {
@@ -106,32 +95,31 @@ function GachaAnalysisHistoryList({
     <Stack
       className={GachaAnalysisHistoryListCls}
       sx={GachaAnalysisHistoryListSx}
+      data-rank={rank}
     >
       <Box className={`${GachaAnalysisHistoryListCls}-title`}>
-        <Typography variant="body1">{categoryTitle}</Typography>
-        <Typography variant="body2">
-          {category !== "permanent" && category !== "newbie"
-            ? `${records.sumRestricted} + ${
-                records.sum - records.sumRestricted
-              }`
-            : records.sum}
-        </Typography>
+        <Typography>{categoryTitle}</Typography>
+        {/* <Typography variant="body2">{records.sum}</Typography> */}
       </Box>
       <Divider orientation="horizontal" variant="fullWidth" />
       <Stack className={`${GachaAnalysisHistoryListCls}-items`}>
-        {records.values.map((item) => (
-          <GachaItemView
-            facet={facet}
-            key={item.id}
-            name={item.name}
-            id={item.item_id || item.name}
-            isWeapon={item.item_type === "Light Cone"}
-            rank={item.rank_type}
-            size={GachaAnalysisHistoryItemViewSize}
-            usedPity={item.usedPity}
-            restricted={item.restricted}
-          />
-        ))}
+        {records.values.length === 0 ? (
+          <Typography sx={{ color: "#7f7f7f" }}>No records found</Typography>
+        ) : (
+          records.values.map((item) => (
+            <GachaItemView
+              facet={facet}
+              key={item.id}
+              name={item.name}
+              id={item.item_id || item.name}
+              isWeapon={item.item_type === "Light Cone"}
+              rank={item.rank_type}
+              size={GachaAnalysisHistoryItemViewSize}
+              usedPity={item.usedPity}
+              restricted={item.restricted}
+            />
+          ))
+        )}
       </Stack>
     </Stack>
   );
@@ -148,16 +136,24 @@ const GachaAnalysisHistoryListSx: SxProps<Theme> = {
     flexDirection: "column",
     flexShrink: 0,
     alignItems: "flex-end",
+    justifyContent: "center",
+    textAlign: "center",
   },
   "& .MuiDivider-root": {
     width: "2px",
     borderWidth: 1,
-    borderColor: "warning.light",
     marginX: 1.5,
   },
   [`& .${GachaAnalysisHistoryListCls}-items`]: {
     gap: 1,
     flexDirection: "row",
     flexWrap: "wrap",
+    alignItems: "center",
+  },
+  [`&[data-rank="5"] .MuiDivider-root`]: {
+    borderColor: "warning.light",
+  },
+  [`&[data-rank="4"] .MuiDivider-root`]: {
+    borderColor: "secondary.light",
   },
 };

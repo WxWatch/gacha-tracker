@@ -20,9 +20,9 @@ export default function GachaChartCalendar() {
     aggregatedValues.values.reduce((acc, cur) => {
       const key = dayjs(cur.time).format("YYYY-MM-DD");
       if (!acc[key]) {
-        acc[key] = 1;
+        acc[key] = +cur.rank_type;
       } else {
-        acc[key] += 1;
+        acc[key] = Math.max(acc[key], +cur.rank_type);
       }
       return acc;
     }, {} as Record<string, number>)
@@ -33,13 +33,13 @@ export default function GachaChartCalendar() {
 
   const metadataByDay: Record<
     string,
-    { golden: number; purple: number; blue: number }
+    { total: number; golden: number; purple: number; blue: number }
   > = {};
   Object.entries(aggregatedValues.metadata).forEach(([, value]) => {
     for (const record of value.values) {
       const day = dayjs(record.time).format("YYYY-MM-DD");
       if (!metadataByDay[day]) {
-        metadataByDay[day] = { golden: 0, purple: 0, blue: 0 };
+        metadataByDay[day] = { total: 0, golden: 0, purple: 0, blue: 0 };
       }
       if (record.rank_type === "5") {
         metadataByDay[day].golden += 1;
@@ -48,11 +48,14 @@ export default function GachaChartCalendar() {
       } else if (record.rank_type === "3") {
         metadataByDay[day].blue += 1;
       }
+
+      metadataByDay[day].total += 1;
     }
   });
 
   const now = dayjs();
-  const from = now.subtract(1, "year");
+  const from = dayjs(aggregatedValues.firstTime);
+  // const from = now.subtract(1, "year");
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -72,14 +75,14 @@ export default function GachaChartCalendar() {
           dayBorderWidth={0}
           dayRadius={99}
           daySpacing={2.5}
-          minValue={0}
-          maxValue={300}
+          minValue={3}
+          maxValue={5}
           emptyColor="#eeeeee"
-          colors={["#bbdefb", "#c5e1a5", "#ffa726", "#f44336"]}
+          colors={["#bbdefb", "#9c27b0", "#ffa726"]}
           margin={{ top: 32, right: 64, bottom: 0, left: 16 }}
-          weekdayTicks={[0, 2, 4, 6]}
+          weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
           weekdayLegendOffset={64}
-          firstWeekday="monday"
+          firstWeekday="sunday"
           monthLegendPosition="before"
           monthLegendOffset={12}
           theme={{
@@ -92,11 +95,11 @@ export default function GachaChartCalendar() {
               zIndex: theme.zIndex.drawer + 1,
             },
           }}
-          tooltip={({ color, day, value }) => (
+          tooltip={({ color, day }) => (
             <Box
               component={Paper}
               position="absolute"
-              bgcolor="white"
+              bgcolor="#efefef"
               width={120}
               top={0}
               right="0.5rem"
@@ -121,7 +124,7 @@ export default function GachaChartCalendar() {
               </Box>
               <Box>
                 <Typography component="p" variant="button">
-                  {`Total：${value}`}
+                  {`Total：${metadataByDay[day]?.total || 0}`}
                 </Typography>
                 <Typography
                   component="p"
@@ -143,12 +146,12 @@ export default function GachaChartCalendar() {
               </Box>
             </Box>
           )}
-          legendFormat={(value) => `>${value}`}
+          legendFormat={(value) => `${value}★`}
           legends={[
             {
               anchor: "bottom",
               direction: "row",
-              itemCount: 4,
+              itemCount: 2,
               itemHeight: 20,
               itemsSpacing: 48,
               itemWidth: 48,

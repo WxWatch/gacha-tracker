@@ -72,7 +72,7 @@ export default function GachaActionImport() {
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           bgcolor: "rgba(0, 0, 0, 0.65)",
-          color: "white",
+          color: "#efefef",
         }}
       >
         <Box display="flex" flexDirection="column" alignItems="center">
