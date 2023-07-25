@@ -29,7 +29,7 @@ export default function GachaActionFetch() {
     busy: false,
   });
 
-  const [currentCategory, setCurrentCategory] = React.useState();
+  const [currentCategory, setCurrentCategory] = React.useState("");
   const [currentTotal, setCurrentTotal] = React.useState(0);
 
   const handleFetch = React.useCallback(async () => {
