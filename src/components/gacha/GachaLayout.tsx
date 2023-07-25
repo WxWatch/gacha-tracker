@@ -83,6 +83,10 @@ export default function GachaLayout() {
             message = String(error);
           }
 
+          if (error) {
+            console.error("GachaLayoutContext.alert: ", error);
+          }
+
           produceState((draft) => {
             draft.alert = message ? { severity, message } : undefined;
           });
@@ -126,6 +130,8 @@ export default function GachaLayout() {
 
 const KnownErrorIdentifiers: Record<string, string> = {
   INTERNAL_CRATE: "Internal error: ",
+  WEB_CACHES:
+    "读取硬盘缓存失败：未找到正确目录！请尝试在游戏内打开抽卡历史记录界面！",
   ILLEGAL_GACHA_URL: "Invalid card draw link!",
   VACANT_GACHA_URL:
     "No valid draw card link found. Please try to open the card drawing history interface in the game!",

@@ -2,21 +2,23 @@ extern crate async_trait;
 extern crate reqwest;
 extern crate serde;
 
+use std::any::Any;
+use std::cmp::Ordering;
+use std::path::{Path, PathBuf};
+
 use super::utilities::{
     fetch_gacha_records, lookup_gacha_urls_from_endpoint, lookup_mihoyo_dir,
-    lookup_path_line_from_keyword,
+    lookup_path_line_from_keyword, lookup_valid_cache_data_dir,
 };
 use super::{
     GachaRecord, GachaRecordFetcher, GachaRecordFetcherChannel, GachaUrl, GachaUrlFinder,
     GameDataDirectoryFinder,
 };
+
 use crate::error::Result;
 use async_trait::async_trait;
 use reqwest::Client as Reqwest;
 use serde::{Deserialize, Serialize};
-use std::any::Any;
-use std::cmp::Ordering;
-use std::path::{Path, PathBuf};
 
 #[derive(Default, Deserialize)]
 pub struct GenshinGacha;
@@ -50,7 +52,9 @@ const ENDPOINT: &str = "/event/gacha_info/api/getGachaLog?";
 
 impl GachaUrlFinder for GenshinGacha {
     fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
-        lookup_gacha_urls_from_endpoint(game_data_dir, ENDPOINT)
+        // See: https://github.com/lgou2w/HoYo.Gacha/issues/10
+        let cache_data_dir = lookup_valid_cache_data_dir(game_data_dir)?;
+        lookup_gacha_urls_from_endpoint(cache_data_dir, ENDPOINT)
     }
 }
 
