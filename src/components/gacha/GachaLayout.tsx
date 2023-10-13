@@ -1,14 +1,14 @@
-import React from "react";
-import { useImmer } from "use-immer";
-import { useStatefulAccountContext } from "@/hooks/useStatefulAccount";
-import { useGachaRecordsQuery } from "@/hooks/useGachaRecordsQuery";
-import { GachaLayoutContext } from "@/components/gacha/GachaLayoutContext";
-import GachaToolbar from "@/components/gacha/toolbar";
-import GachaOverview from "@/components/gacha/overview";
-import GachaAnalysis from "@/components/gacha/analysis";
-import GachaChart from "@/components/gacha/chart";
-import Alert from "@mui/material/Alert";
-import Typography from "@mui/material/Typography";
+import React, { useEffect, useRef } from 'react'
+import { useImmer } from 'use-immer'
+import { useStatefulAccountContext } from '@/hooks/useStatefulAccount'
+import { useGachaRecordsQuery } from '@/hooks/useGachaRecordsQuery'
+import { GachaLayoutContext } from '@/components/gacha/GachaLayoutContext'
+import GachaToolbar from '@/components/gacha/toolbar'
+import GachaOverview from '@/components/gacha/overview'
+import GachaAnalysis from '@/components/gacha/analysis'
+import GachaChart from '@/components/gacha/chart'
+import Alert from '@mui/material/Alert'
+import Typography from '@mui/material/Typography'
 
 export default function GachaLayout() {
   const { facet, accounts, selectedAccountUid } = useStatefulAccountContext();
@@ -29,6 +29,18 @@ export default function GachaLayout() {
         }
       | undefined,
   });
+
+  // HACK: Clear alert if switching to another account
+  const selectedAccountUidRef = useRef(selectedAccountUid)
+  useEffect(() => {
+    if (selectedAccountUidRef.current !== selectedAccountUid) {
+      produceState((prev) => {
+        prev.alert = undefined
+      })
+    }
+
+    selectedAccountUidRef.current = selectedAccountUid
+  }, [selectedAccountUid])
 
   // Check selected account
   const selectedAccount = selectedAccountUid
@@ -83,25 +95,20 @@ export default function GachaLayout() {
             message = String(error);
           }
 
-          if (error) {
-            console.error("GachaLayoutContext.alert: ", error);
-          }
+        if (error) {
+          console.error('GachaLayoutContext.alert: ', error)
+        }
 
-          produceState((draft) => {
-            draft.alert = message ? { severity, message } : undefined;
-          });
-        },
-      }}
-    >
-      {alert && (
-        <Alert
-          severity={alert.severity}
-          onClose={() =>
-            produceState((draft) => {
-              draft.alert = undefined;
-            })
-          }
-        >
+        produceState((draft) => {
+          draft.alert = message
+            ? { severity, message }
+            : undefined
+        })
+      }
+    }}>
+      {alert && <Alert
+        severity={alert.severity}
+        onClose={() => produceState((draft) => { draft.alert = undefined })}>
           {alert?.message}
         </Alert>
       )}

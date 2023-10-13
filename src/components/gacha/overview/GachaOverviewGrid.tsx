@@ -163,6 +163,8 @@ function GachaOverviewGridCard({
     );
   }
 
+  const aggregated = category === "aggregated";
+
   return (
     <Card sx={GachaOverviewGridCardSx}>
       <CardHeader

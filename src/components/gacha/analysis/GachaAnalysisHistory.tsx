@@ -117,6 +117,7 @@ function GachaAnalysisHistoryList({
               size={GachaAnalysisHistoryItemViewSize}
               usedPity={item.usedPity}
               restricted={item.restricted}
+              time={item.time}
             />
           ))
         )}

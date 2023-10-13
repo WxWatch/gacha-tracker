@@ -1,16 +1,6 @@
-extern crate anyhow;
-extern crate reqwest;
-extern crate sea_orm;
-extern crate serde;
-extern crate serde_json;
-extern crate tauri;
-extern crate time;
-extern crate thiserror;
-
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
   // Crate
-
   #[error(transparent)]
   Io(#[from] std::io::Error),
 
@@ -33,11 +23,12 @@ pub enum Error {
   Time(#[from] time::Error),
 
   // Specific
-
   #[error("Unsupported Operation")]
   UnsupportedOperation,
 
   // Gacha
+  #[error("Web Caches")]
+  WebCaches,
 
   #[error("Web Caches")]
   WebCaches,
@@ -52,10 +43,7 @@ pub enum Error {
   TimeoutdGachaUrl,
 
   #[error("Gacha record response: {retcode:?} {message:?}")]
-  GachaRecordRetcode {
-    retcode: i32,
-    message: String
-  },
+  GachaRecordRetcode { retcode: i32, message: String },
 
   #[allow(unused)]
   #[error("Gacha record fetcher channel send error")]
@@ -66,7 +54,6 @@ pub enum Error {
   GachaRecordFetcherChannelJoin,
 
   // UIGF & SRGF
-
   #[error("UIGF or SRGF Mismatched UID: expected {expected:?}, actual {actual:?}")]
   UIGFOrSRGFMismatchedUID { expected: String, actual: String },
 
@@ -74,7 +61,6 @@ pub enum Error {
   UIGFOrSRGFInvalidField(String),
 
   // Account
-
   #[error("Account already exists")]
   AccountAlreadyExists,
 
@@ -116,7 +102,9 @@ impl_error_identifiers! {
 
 impl serde::Serialize for Error {
   fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
-  where S: serde::Serializer {
+  where
+    S: serde::Serializer,
+  {
     use serde::ser::SerializeStruct;
     let mut state = serializer.serialize_struct("Error", 2)?;
     state.serialize_field("identifier", &self.identifier())?;

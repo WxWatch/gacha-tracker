@@ -1,14 +1,12 @@
-extern crate sea_orm;
-extern crate serde;
-extern crate serde_json;
-
 use sea_orm::entity::prelude::*;
-use sea_orm::{TryGetable, TryGetError};
 use sea_orm::sea_query::{ArrayType, ColumnType, Nullable, Value, ValueType, ValueTypeErr};
+use sea_orm::{TryGetError, TryGetable};
 use serde::{Deserialize, Serialize};
-use serde_json::{Value as JsonValue, Map as Json};
+use serde_json::{Map as Json, Value as JsonValue};
 
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize, EnumIter, DeriveActiveEnum)]
+#[derive(
+  Clone, Debug, PartialEq, Eq, Deserialize, Serialize, EnumIter, DeriveActiveEnum, DeriveDisplay,
+)]
 #[sea_orm(rs_type = "String", db_type = "Text")]
 pub enum AccountFacet {
   #[sea_orm(string_value = "genshin")]
@@ -16,7 +14,7 @@ pub enum AccountFacet {
   Genshin,
   #[sea_orm(string_value = "starrail")]
   #[serde(rename = "starrail")]
-  StarRail
+  StarRail,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -35,7 +33,7 @@ pub struct Model {
 
   pub game_data_dir: String,
   pub gacha_url: Option<String>,
-  pub properties: Option<AccountProperties>
+  pub properties: Option<AccountProperties>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -61,21 +59,20 @@ impl From<AccountProperties> for Value {
 }
 
 impl TryGetable for AccountProperties {
-  fn try_get_by<I: sea_orm::ColIdx>(
-    res: &QueryResult,
-    index: I
-  ) -> Result<Self, TryGetError> {
-    let json_str: String = res.try_get_by(index)
-      .map_err(TryGetError::DbErr)
-      .and_then(|opt: Option<String>| {
-        let str = index.as_str()
-          .map(str::to_string)
-          .or(index.as_usize().map(ToString::to_string))
-          .unwrap();
-        opt.ok_or(TryGetError::Null(str))
-      })?;
-    serde_json::from_str(&json_str)
-      .map_err(|e| TryGetError::DbErr(DbErr::Json(e.to_string())))
+  fn try_get_by<I: sea_orm::ColIdx>(res: &QueryResult, index: I) -> Result<Self, TryGetError> {
+    let json_str: String =
+      res
+        .try_get_by(index)
+        .map_err(TryGetError::DbErr)
+        .and_then(|opt: Option<String>| {
+          let str = index
+            .as_str()
+            .map(str::to_string)
+            .or(index.as_usize().map(ToString::to_string))
+            .unwrap();
+          opt.ok_or(TryGetError::Null(str))
+        })?;
+    serde_json::from_str(&json_str).map_err(|e| TryGetError::DbErr(DbErr::Json(e.to_string())))
   }
 }
 
@@ -83,8 +80,7 @@ impl ValueType for AccountProperties {
   fn try_from(v: Value) -> Result<Self, ValueTypeErr> {
     match v {
       Value::String(Some(x)) => Ok(AccountProperties(
-        serde_json::from_str(&x)
-          .map_err(|_| ValueTypeErr)?
+        serde_json::from_str(&x).map_err(|_| ValueTypeErr)?,
       )),
       _ => Err(ValueTypeErr),
     }

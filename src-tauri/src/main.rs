@@ -3,16 +3,12 @@
   windows_subsystem = "windows"
 )]
 
-extern crate tauri;
-extern crate tracing;
-extern crate tracing_subscriber;
-
-mod disk_cache;
+mod commands;
 mod constants;
+mod disk_cache;
 mod error;
 mod gacha;
 mod storage;
-mod commands;
 
 fn main() {
   tracing_subscriber::fmt()
@@ -24,9 +20,11 @@ fn main() {
     .plugin(storage::StoragePluginBuilder::new().build())
     .plugin(gacha::GachaPluginBuilder::new().build())
     .setup(|app| {
-      use tauri::Manager;
-      #[cfg(debug_assertions)]
-      app.get_window("main").unwrap().open_devtools();
+      let open_devtools = cfg!(debug_assertions) || std::env::var("DEVTOOLS").is_ok();
+      if open_devtools {
+        use tauri::Manager;
+        app.get_window("main").unwrap().open_devtools();
+      }
       Ok(())
     })
     .invoke_handler(commands::get_handlers())

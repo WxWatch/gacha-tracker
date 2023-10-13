@@ -6,30 +6,34 @@ import Typography from "@mui/material/Typography";
 import GenshinUIRarity3Background from "@/assets/images/genshin/UI_Rarity_3_Background.png";
 import GenshinUIRarity4Background from "@/assets/images/genshin/UI_Rarity_4_Background.png";
 import GenshinUIRarity5Background from "@/assets/images/genshin/UI_Rarity_5_Background.png";
+import { lookupAssetIcon } from "./icons";
+import dayjs from "@/utilities/dayjs";
 
 export interface GachaItemViewProps {
   facet: AccountFacet;
   name: string;
   id: string;
   isWeapon: boolean;
-  rank: string;
-  size?: number;
+  rank: 3 | 4 | 5 | "3" | "4" | "5";
+  size: number;
   usedPity?: number;
   restricted?: boolean;
+  time?: string | Date;
 }
 
 export default function GachaItemView(props: GachaItemViewProps) {
-  const {
-    facet,
-    name,
-    id,
-    isWeapon,
-    rank,
-    size,
-    usedPity,
-    restricted = false,
-  } = props;
-  const src = getStaticResource(facet, isWeapon ? "weapon" : "character", id);
+  const { facet, name, id, isWeapon, rank, size, usedPity, restricted, time } =
+    props;
+
+  const category = isWeapon ? "weapon" : "character";
+  const icon = lookupAssetIcon(facet, category, id);
+
+  let src = icon?.[1];
+  if (!src) {
+    src = getRemoteResourceSrc(facet, category, id);
+  }
+
+  const title = !time ? name : name + "\n" + dayjs(time).format("LLLL");
 
   return (
     <Box
@@ -40,7 +44,7 @@ export default function GachaItemView(props: GachaItemViewProps) {
       data-facet={facet}
       data-rank={rank}
       data-restricted={restricted}
-      title={name}
+      title={title}
     >
       <img src={src} alt={name} />
       {usedPity && (
@@ -57,12 +61,12 @@ export default function GachaItemView(props: GachaItemViewProps) {
   );
 }
 
-function getStaticResource(
+function getRemoteResourceSrc(
   facet: AccountFacet,
-  namespace: string,
+  category: string,
   itemIdOrName: string
 ) {
-  return `https://hoyo-gacha.lgou2w.com/static/${facet}/${namespace}/${itemIdOrName}.png`;
+  return `https://hoyo-gacha.lgou2w.com/static/${facet}/${category}/${itemIdOrName}.png`;
 }
 
 const GachaItemViewCls = "gacha-item-view";

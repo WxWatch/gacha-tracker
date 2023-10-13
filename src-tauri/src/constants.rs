@@ -1,7 +1,5 @@
 #![allow(unused)]
 
-extern crate shadow_rs;
-
 pub const ID: &str = "com.wxwatch.gacha.tracker";
 pub const NAME: &str = "Gacha Tracker";
 pub const DATABASE: &str = "com.wxwatch.gacha.tracker.db";
