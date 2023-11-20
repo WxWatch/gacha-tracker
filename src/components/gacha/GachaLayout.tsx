@@ -9,6 +9,10 @@ import GachaAnalysis from "@/components/gacha/analysis";
 import GachaChart from "@/components/gacha/chart";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
+import PaimonTreasureSrc from "@/assets/images/Paimon.png";
+import StarRailMissingSrc from "@/assets/images/starrail/pom-pom.webp";
+import Stack from "@mui/material/Stack";
+import { AccountFacet } from "@/interfaces/account";
 
 export default function GachaLayout() {
   const { facet, accounts, selectedAccountUid } = useStatefulAccountContext();
@@ -48,11 +52,29 @@ export default function GachaLayout() {
     : null;
   if (!selectedAccount) {
     return (
-      <Typography color="error">
-        {Object.keys(accounts).length > 0
-          ? "There are currently no selected accounts. Please select an account first!"
-          : "There are no accounts available yet. Please add an account first!"}
-      </Typography>
+      <Stack
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          height: "calc(100vh - 65px)",
+          alignItems: "center",
+        }}
+      >
+        <img
+          style={{ filter: "grayscale()" }}
+          src={
+            facet === AccountFacet.Genshin
+              ? PaimonTreasureSrc
+              : StarRailMissingSrc
+          }
+          alt="Paimon"
+        />
+        <Typography variant="h5" color="gray">
+          {Object.keys(accounts).length > 0
+            ? "There are currently no selected accounts. Please select an account first!"
+            : "No accounts found. Please add an account!"}
+        </Typography>
+      </Stack>
     );
   }
 
