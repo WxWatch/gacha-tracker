@@ -14,7 +14,7 @@ use time::OffsetDateTime;
 //    International
 
 pub trait GameDataDirectoryFinder {
-    fn find_game_data_directories(&self) -> Result<Vec<PathBuf>>;
+  fn find_game_data_directories(&self) -> Result<Vec<PathBuf>>;
 }
 
 /// Gacha Url
@@ -27,11 +27,11 @@ pub struct GachaUrl {
 }
 
 impl std::ops::Deref for GachaUrl {
-    type Target = String;
+  type Target = String;
 
-    fn deref(&self) -> &Self::Target {
-        &self.value
-    }
+  fn deref(&self) -> &Self::Target {
+    &self.value
+  }
 }
 
 /// Gacha Url Finder
@@ -43,22 +43,22 @@ pub trait GachaUrlFinder {
 /// Gacha Record
 
 pub trait GachaRecord: Any {
-    fn id(&self) -> &str;
-    fn as_any(&self) -> &dyn Any;
+  fn id(&self) -> &str;
+  fn as_any(&self) -> &dyn Any;
 }
 
 impl dyn GachaRecord {
-    #[allow(unused)]
-    pub fn downcast_ref<T: GachaRecord>(&self) -> Option<&T> {
-        self.as_any().downcast_ref::<T>()
-    }
+  #[allow(unused)]
+  pub fn downcast_ref<T: GachaRecord>(&self) -> Option<&T> {
+    self.as_any().downcast_ref::<T>()
+  }
 }
 
 /// Gacha Record Fetcher
 
 #[async_trait]
 pub trait GachaRecordFetcher {
-    type Target: GachaRecord;
+  type Target: GachaRecord;
 
   async fn fetch_gacha_records(
     &self,
@@ -90,7 +90,7 @@ pub enum GachaRecordFetcherChannelFragment<T: GachaRecord + Sized + Serialize + 
 
 #[async_trait]
 pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + Sync> {
-    type Fetcher: GachaRecordFetcher<Target = T> + Send + Sync;
+  type Fetcher: GachaRecordFetcher<Target = T> + Send + Sync;
 
   async fn pull_gacha_records(
     &self,
@@ -155,70 +155,17 @@ pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + 
             .send(GachaRecordFetcherChannelFragment::Data(data))
             .await
             .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-        tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
 
-        let mut end_id = String::from("0");
-        let mut pagination: u32 = 1;
-
-        loop {
-            if pagination % 5 == 0 {
-                sender
-                    .send(GachaRecordFetcherChannelFragment::Sleeping)
-                    .await
-                    .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-                tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
-            }
-
-            sender
-                .send(GachaRecordFetcherChannelFragment::Pagination(pagination))
-                .await
-                .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-            let gacha_records = fetcher
-                .fetch_gacha_records(reqwest, gacha_url, Some(gacha_type), Some(&end_id))
-                .await?;
-            pagination += 1;
-
-            if let Some(gacha_records) = gacha_records {
-                if !gacha_records.is_empty() {
-                    end_id = gacha_records.last().unwrap().id().to_owned();
-
-                    let mut should_break = false;
-                    let data = if let Some(last) = last_end_id {
-                        let mut tmp = Vec::with_capacity(gacha_records.len());
-                        for record in gacha_records {
-                            if last.cmp(record.id()).is_lt() {
-                                tmp.push(record);
-                            } else {
-                                should_break = true;
-                            }
-                        }
-                        tmp
-                    } else {
-                        gacha_records
-                    };
-
-                    sender
-                        .send(GachaRecordFetcherChannelFragment::Data(data))
-                        .await
-                        .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-
-                    if should_break {
-                        break;
-                    } else {
-                        tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
-                        continue;
-                    }
-                }
-            }
-
+          if should_break {
             break;
+          } else {
+            tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
+            continue;
+          }
         }
+      }
 
-        sender
-            .send(GachaRecordFetcherChannelFragment::Finished)
-            .await
-            .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-        Ok(())
+      break;
     }
 
     sender
@@ -248,6 +195,8 @@ pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + 
         )
         .await?;
     }
+    Ok(())
+  }
 }
 
 pub async fn create_fetcher_channel<Record, FetcherChannel, F, Fut>(
@@ -264,8 +213,8 @@ where
   F: Fn(GachaRecordFetcherChannelFragment<Record>) -> Fut,
   Fut: Future<Output = Result<()>>,
 {
-    use tokio::spawn;
-    use tokio::sync::mpsc::channel;
+  use tokio::spawn;
+  use tokio::sync::mpsc::channel;
 
   let (sender, mut receiver) = channel(1);
   let task = spawn(async move {
@@ -280,10 +229,11 @@ where
       .await
   });
 
-    while let Some(fragment) = receiver.recv().await {
-        receiver_fn(fragment).await?;
-    }
+  while let Some(fragment) = receiver.recv().await {
+    receiver_fn(fragment).await?;
+  }
 
-    task.await
-        .map_err(|_| Error::GachaRecordFetcherChannelJoin)?
+  task
+    .await
+    .map_err(|_| Error::GachaRecordFetcherChannelJoin)?
 }

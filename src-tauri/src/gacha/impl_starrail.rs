@@ -20,31 +20,18 @@ pub struct StarRailGacha;
 /// Game Directory
 
 impl GameDataDirectoryFinder for StarRailGacha {
-    fn find_game_data_directories(&self) -> Result<Vec<PathBuf>> {
-        let cognosphere_dir = lookup_cognosphere_dir();
-        let mihoyo_dir = lookup_mihoyo_dir();
-        let mut directories = Vec::new();
+  fn find_game_data_directories(&self) -> Result<Vec<PathBuf>> {
+    let cognosphere_dir = lookup_cognosphere_dir();
+    let mihoyo_dir = lookup_mihoyo_dir();
+    let mut directories = Vec::new();
 
     // TODO: Untested
     const INTERNATIONAL_PLAYER_LOG: &str = "Star Rail/Player.log";
     const INTERNATIONAL_DIR_KEYWORD: &str = "/StarRail_Data/";
 
-        let mut player_log = cognosphere_dir.join(INTERNATIONAL_PLAYER_LOG);
-        if let Some(directory) =
-            lookup_path_line_from_keyword(player_log, INTERNATIONAL_DIR_KEYWORD)?
-        {
-            directories.push(directory);
-        }
-
-        const CHINESE_PLAYER_LOG: &str = "崩坏：星穹铁道/Player.log";
-        const CHINESE_DIR_KEYWORD: &str = "/StarRail_Data/";
-
-        player_log = mihoyo_dir.join(CHINESE_PLAYER_LOG);
-        if let Some(directory) = lookup_path_line_from_keyword(player_log, CHINESE_DIR_KEYWORD)? {
-            directories.push(directory);
-        }
-
-        Ok(directories)
+    let mut player_log = cognosphere_dir.join(INTERNATIONAL_PLAYER_LOG);
+    if let Some(directory) = lookup_path_line_from_keyword(player_log, INTERNATIONAL_DIR_KEYWORD)? {
+      directories.push(directory);
     }
 
     const CHINESE_PLAYER_LOG: &str = "崩坏：星穹铁道/Player.log";
@@ -61,7 +48,7 @@ impl GameDataDirectoryFinder for StarRailGacha {
 
 /// Gacha Url
 
-const ENDPOINT: &str = "/common/gacha_record/api/getGachaLog?";
+const ENDPOINT: &str = "/api/getGachaLog?";
 
 impl GachaUrlFinder for StarRailGacha {
   fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
@@ -89,19 +76,19 @@ pub struct StarRailGachaRecord {
 }
 
 impl GachaRecord for StarRailGachaRecord {
-    fn id(&self) -> &str {
-        &self.id
-    }
+  fn id(&self) -> &str {
+    &self.id
+  }
 
-    fn as_any(&self) -> &dyn Any {
-        self
-    }
+  fn as_any(&self) -> &dyn Any {
+    self
+  }
 }
 
 impl PartialOrd for StarRailGachaRecord {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.id.partial_cmp(&other.id)
-    }
+  fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+    self.id.partial_cmp(&other.id)
+  }
 }
 
 /// Gacha Record Fetcher
@@ -119,7 +106,7 @@ pub(crate) struct StarRailGachaRecordPagination {
 
 #[async_trait]
 impl GachaRecordFetcher for StarRailGacha {
-    type Target = StarRailGachaRecord;
+  type Target = StarRailGachaRecord;
 
   async fn fetch_gacha_records(
     &self,
@@ -133,8 +120,8 @@ impl GachaRecordFetcher for StarRailGacha {
     )
     .await?;
 
-        Ok(response.data.map(|pagination| pagination.list))
-    }
+    Ok(response.data.map(|pagination| pagination.list))
+  }
 
   async fn fetch_gacha_records_any_uid(
     &self,
@@ -150,5 +137,5 @@ impl GachaRecordFetcher for StarRailGacha {
 
 #[async_trait]
 impl GachaRecordFetcherChannel<StarRailGachaRecord> for StarRailGacha {
-    type Fetcher = Self;
+  type Fetcher = Self;
 }

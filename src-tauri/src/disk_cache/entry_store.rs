@@ -20,28 +20,28 @@ pub struct EntryStore {
   pub flags: u32,
   pub pad: [i32; 4],
   pub self_hash: u32,
-  pub key: Box<[u8; BLOCK_KEY_SIZE as usize]>,
+  pub key: [u8; BLOCK_KEY_SIZE as usize],
 }
 
 impl EntryStore {
-    pub fn from_reader(mut reader: impl Read) -> Result<Self> {
-        let hash = reader.read_u32::<LittleEndian>()?;
-        let next = reader.read_cache_addr::<LittleEndian>()?;
-        let rankings_node = reader.read_cache_addr::<LittleEndian>()?;
-        let reuse_count = reader.read_i32::<LittleEndian>()?;
-        let refetch_count = reader.read_i32::<LittleEndian>()?;
-        let state = reader.read_i32::<LittleEndian>()?;
-        let creation_time = reader.read_u64::<LittleEndian>()?;
-        let key_len = reader.read_i32::<LittleEndian>()?;
-        let long_key = reader.read_cache_addr::<LittleEndian>()?;
-        let data_size = reader.read_cache_addrs::<LittleEndian, 4>()?;
-        let data_addr = reader.read_cache_addrs::<LittleEndian, 4>()?;
-        let flags = reader.read_u32::<LittleEndian>()?;
-        let mut pad = [0; 4];
-        reader.read_i32_into::<LittleEndian>(&mut pad)?;
-        let self_hash = reader.read_u32::<LittleEndian>()?;
-        let mut key = Box::new([0; BLOCK_KEY_SIZE as usize]);
-        reader.read_exact(&mut *key)?;
+  pub fn from_reader(mut reader: impl Read) -> Result<Self> {
+    let hash = reader.read_u32::<LittleEndian>()?;
+    let next = reader.read_cache_addr::<LittleEndian>()?;
+    let rankings_node = reader.read_cache_addr::<LittleEndian>()?;
+    let reuse_count = reader.read_i32::<LittleEndian>()?;
+    let refetch_count = reader.read_i32::<LittleEndian>()?;
+    let state = reader.read_i32::<LittleEndian>()?;
+    let creation_time = reader.read_u64::<LittleEndian>()?;
+    let key_len = reader.read_i32::<LittleEndian>()?;
+    let long_key = reader.read_cache_addr::<LittleEndian>()?;
+    let data_size = reader.read_cache_addrs::<LittleEndian, 4>()?;
+    let data_addr = reader.read_cache_addrs::<LittleEndian, 4>()?;
+    let flags = reader.read_u32::<LittleEndian>()?;
+    let mut pad = [0; 4];
+    reader.read_i32_into::<LittleEndian>(&mut pad)?;
+    let self_hash = reader.read_u32::<LittleEndian>()?;
+    let mut key = [0; BLOCK_KEY_SIZE as usize];
+    reader.read_exact(&mut key)?;
 
     Ok(Self {
       hash,
@@ -98,7 +98,7 @@ impl EntryStore {
       let data = &self.key[0..self.key_len as usize];
       Ok(String::from_utf8_lossy(data))
     } else {
-      Ok(String::from_utf8_lossy(&*self.key))
+      Ok(String::from_utf8_lossy(&self.key))
     }
   }
 
@@ -123,4 +123,5 @@ impl EntryStore {
       let data = &long_key_data[0..self.key_len as usize];
       Ok(String::from_utf8_lossy(data))
     }
+  }
 }

@@ -25,7 +25,7 @@ pub struct BlockFileHeader {
   pub hints: [i32; 4],
   pub updating: i32,
   pub user: [i32; 5],
-  pub allocation_map: Box<[u32; BLOCK_MAX_BLOCKS as usize / 32]>,
+  pub allocation_map: [u32; BLOCK_MAX_BLOCKS as usize / 32],
 }
 
 pub struct BlockFile {
@@ -34,23 +34,23 @@ pub struct BlockFile {
 }
 
 impl BlockFileHeader {
-    pub fn from_reader(mut reader: impl Read) -> Result<Self> {
-        let magic = reader.read_u32::<LittleEndian>()?;
-        let version = reader.read_u32::<LittleEndian>()?;
-        let this_file = reader.read_i16::<LittleEndian>()?;
-        let next_file = reader.read_i16::<LittleEndian>()?;
-        let entry_size = reader.read_i32::<LittleEndian>()?;
-        let num_entries = reader.read_i32::<LittleEndian>()?;
-        let max_entries = reader.read_i32::<LittleEndian>()?;
-        let mut empty = [0; 4];
-        reader.read_i32_into::<LittleEndian>(&mut empty)?;
-        let mut hints = [0; 4];
-        reader.read_i32_into::<LittleEndian>(&mut hints)?;
-        let updating = reader.read_i32::<LittleEndian>()?;
-        let mut user = [0; 5];
-        reader.read_i32_into::<LittleEndian>(&mut user)?;
-        let mut allocation_map = Box::new([0; BLOCK_MAX_BLOCKS as usize / 32]);
-        reader.read_u32_into::<LittleEndian>(&mut *allocation_map)?;
+  pub fn from_reader(mut reader: impl Read) -> Result<Self> {
+    let magic = reader.read_u32::<LittleEndian>()?;
+    let version = reader.read_u32::<LittleEndian>()?;
+    let this_file = reader.read_i16::<LittleEndian>()?;
+    let next_file = reader.read_i16::<LittleEndian>()?;
+    let entry_size = reader.read_i32::<LittleEndian>()?;
+    let num_entries = reader.read_i32::<LittleEndian>()?;
+    let max_entries = reader.read_i32::<LittleEndian>()?;
+    let mut empty = [0; 4];
+    reader.read_i32_into::<LittleEndian>(&mut empty)?;
+    let mut hints = [0; 4];
+    reader.read_i32_into::<LittleEndian>(&mut hints)?;
+    let updating = reader.read_i32::<LittleEndian>()?;
+    let mut user = [0; 5];
+    reader.read_i32_into::<LittleEndian>(&mut user)?;
+    let mut allocation_map = [0; BLOCK_MAX_BLOCKS as usize / 32];
+    reader.read_u32_into::<LittleEndian>(&mut allocation_map)?;
 
     Ok(Self {
       magic,
@@ -70,10 +70,10 @@ impl BlockFileHeader {
 }
 
 impl BlockFile {
-    pub fn from_reader(mut reader: impl Read) -> Result<Self> {
-        let header = BlockFileHeader::from_reader(&mut reader)?;
-        let mut data = Vec::new();
-        reader.read_to_end(&mut data)?;
+  pub fn from_reader(mut reader: impl Read) -> Result<Self> {
+    let header = BlockFileHeader::from_reader(&mut reader)?;
+    let mut data = Vec::new();
+    reader.read_to_end(&mut data)?;
 
     Ok(Self { header, data })
   }
@@ -102,4 +102,5 @@ impl BlockFile {
       let data = &self.data[offset..(offset + length)];
       Ok(data)
     }
+  }
 }

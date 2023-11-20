@@ -1,112 +1,114 @@
-import GenshinCharacter10000002 from '@/assets/images/genshin/character/10000002.png'
-import GenshinCharacter10000003 from '@/assets/images/genshin/character/10000003.png'
-import GenshinCharacter10000016 from '@/assets/images/genshin/character/10000016.png'
-import GenshinCharacter10000022 from '@/assets/images/genshin/character/10000022.png'
-import GenshinCharacter10000026 from '@/assets/images/genshin/character/10000026.png'
-import GenshinCharacter10000029 from '@/assets/images/genshin/character/10000029.png'
-import GenshinCharacter10000030 from '@/assets/images/genshin/character/10000030.png'
-import GenshinCharacter10000033 from '@/assets/images/genshin/character/10000033.png'
-import GenshinCharacter10000035 from '@/assets/images/genshin/character/10000035.png'
-import GenshinCharacter10000037 from '@/assets/images/genshin/character/10000037.png'
-import GenshinCharacter10000038 from '@/assets/images/genshin/character/10000038.png'
-import GenshinCharacter10000041 from '@/assets/images/genshin/character/10000041.png'
-import GenshinCharacter10000042 from '@/assets/images/genshin/character/10000042.png'
-import GenshinCharacter10000046 from '@/assets/images/genshin/character/10000046.png'
-import GenshinCharacter10000047 from '@/assets/images/genshin/character/10000047.png'
-import GenshinCharacter10000049 from '@/assets/images/genshin/character/10000049.png'
-import GenshinCharacter10000051 from '@/assets/images/genshin/character/10000051.png'
-import GenshinCharacter10000052 from '@/assets/images/genshin/character/10000052.png'
-import GenshinCharacter10000054 from '@/assets/images/genshin/character/10000054.png'
-import GenshinCharacter10000057 from '@/assets/images/genshin/character/10000057.png'
-import GenshinCharacter10000058 from '@/assets/images/genshin/character/10000058.png'
-import GenshinCharacter10000060 from '@/assets/images/genshin/character/10000060.png'
-import GenshinCharacter10000063 from '@/assets/images/genshin/character/10000063.png'
-import GenshinCharacter10000066 from '@/assets/images/genshin/character/10000066.png'
-import GenshinCharacter10000069 from '@/assets/images/genshin/character/10000069.png'
-import GenshinCharacter10000070 from '@/assets/images/genshin/character/10000070.png'
-import GenshinCharacter10000071 from '@/assets/images/genshin/character/10000071.png'
-import GenshinCharacter10000073 from '@/assets/images/genshin/character/10000073.png'
-import GenshinCharacter10000075 from '@/assets/images/genshin/character/10000075.png'
-import GenshinCharacter10000078 from '@/assets/images/genshin/character/10000078.png'
-import GenshinCharacter10000079 from '@/assets/images/genshin/character/10000079.png'
-import GenshinCharacter10000082 from '@/assets/images/genshin/character/10000082.png'
-import GenshinCharacter10000084 from '@/assets/images/genshin/character/10000084.png'
-import GenshinCharacter10000086 from '@/assets/images/genshin/character/10000086.png'
-import GenshinCharacter10000087 from '@/assets/images/genshin/character/10000087.png'
-import GenshinWeapon11501 from '@/assets/images/genshin/weapon/11501.png'
-import GenshinWeapon11502 from '@/assets/images/genshin/weapon/11502.png'
-import GenshinWeapon11503 from '@/assets/images/genshin/weapon/11503.png'
-import GenshinWeapon11504 from '@/assets/images/genshin/weapon/11504.png'
-import GenshinWeapon11505 from '@/assets/images/genshin/weapon/11505.png'
-import GenshinWeapon11509 from '@/assets/images/genshin/weapon/11509.png'
-import GenshinWeapon11510 from '@/assets/images/genshin/weapon/11510.png'
-import GenshinWeapon11511 from '@/assets/images/genshin/weapon/11511.png'
-import GenshinWeapon11512 from '@/assets/images/genshin/weapon/11512.png'
-import GenshinWeapon12501 from '@/assets/images/genshin/weapon/12501.png'
-import GenshinWeapon12502 from '@/assets/images/genshin/weapon/12502.png'
-import GenshinWeapon12503 from '@/assets/images/genshin/weapon/12503.png'
-import GenshinWeapon12504 from '@/assets/images/genshin/weapon/12504.png'
-import GenshinWeapon12510 from '@/assets/images/genshin/weapon/12510.png'
-import GenshinWeapon12511 from '@/assets/images/genshin/weapon/12511.png'
-import GenshinWeapon13501 from '@/assets/images/genshin/weapon/13501.png'
-import GenshinWeapon13502 from '@/assets/images/genshin/weapon/13502.png'
-import GenshinWeapon13504 from '@/assets/images/genshin/weapon/13504.png'
-import GenshinWeapon13505 from '@/assets/images/genshin/weapon/13505.png'
-import GenshinWeapon13507 from '@/assets/images/genshin/weapon/13507.png'
-import GenshinWeapon13509 from '@/assets/images/genshin/weapon/13509.png'
-import GenshinWeapon13511 from '@/assets/images/genshin/weapon/13511.png'
-import GenshinWeapon14501 from '@/assets/images/genshin/weapon/14501.png'
-import GenshinWeapon14502 from '@/assets/images/genshin/weapon/14502.png'
-import GenshinWeapon14504 from '@/assets/images/genshin/weapon/14504.png'
-import GenshinWeapon14505 from '@/assets/images/genshin/weapon/14505.png'
-import GenshinWeapon14506 from '@/assets/images/genshin/weapon/14506.png'
-import GenshinWeapon14509 from '@/assets/images/genshin/weapon/14509.png'
-import GenshinWeapon14511 from '@/assets/images/genshin/weapon/14511.png'
-import GenshinWeapon14512 from '@/assets/images/genshin/weapon/14512.png'
-import GenshinWeapon14513 from '@/assets/images/genshin/weapon/14513.png'
-import GenshinWeapon14514 from '@/assets/images/genshin/weapon/14514.png'
-import GenshinWeapon15501 from '@/assets/images/genshin/weapon/15501.png'
-import GenshinWeapon15502 from '@/assets/images/genshin/weapon/15502.png'
-import GenshinWeapon15503 from '@/assets/images/genshin/weapon/15503.png'
-import GenshinWeapon15507 from '@/assets/images/genshin/weapon/15507.png'
-import GenshinWeapon15508 from '@/assets/images/genshin/weapon/15508.png'
-import GenshinWeapon15509 from '@/assets/images/genshin/weapon/15509.png'
-import GenshinWeapon15511 from '@/assets/images/genshin/weapon/15511.png'
-import GenshinWeapon15512 from '@/assets/images/genshin/weapon/15512.png'
-import StarRailCharacter1003 from '@/assets/images/starrail/character/1003.png'
-import StarRailCharacter1004 from '@/assets/images/starrail/character/1004.png'
-import StarRailCharacter1005 from '@/assets/images/starrail/character/1005.png'
-import StarRailCharacter1006 from '@/assets/images/starrail/character/1006.png'
-import StarRailCharacter1101 from '@/assets/images/starrail/character/1101.png'
-import StarRailCharacter1102 from '@/assets/images/starrail/character/1102.png'
-import StarRailCharacter1104 from '@/assets/images/starrail/character/1104.png'
-import StarRailCharacter1107 from '@/assets/images/starrail/character/1107.png'
-import StarRailCharacter1112 from '@/assets/images/starrail/character/1112.png'
-import StarRailCharacter1203 from '@/assets/images/starrail/character/1203.png'
-import StarRailCharacter1204 from '@/assets/images/starrail/character/1204.png'
-import StarRailCharacter1205 from '@/assets/images/starrail/character/1205.png'
-import StarRailCharacter1208 from '@/assets/images/starrail/character/1208.png'
-import StarRailCharacter1209 from '@/assets/images/starrail/character/1209.png'
-import StarRailCharacter1211 from '@/assets/images/starrail/character/1211.png'
-import StarRailCharacter1212 from '@/assets/images/starrail/character/1212.png'
-import StarRailCharacter1213 from '@/assets/images/starrail/character/1213.png'
-import StarRailWeapon23000 from '@/assets/images/starrail/weapon/23000.png'
-import StarRailWeapon23001 from '@/assets/images/starrail/weapon/23001.png'
-import StarRailWeapon23002 from '@/assets/images/starrail/weapon/23002.png'
-import StarRailWeapon23003 from '@/assets/images/starrail/weapon/23003.png'
-import StarRailWeapon23004 from '@/assets/images/starrail/weapon/23004.png'
-import StarRailWeapon23005 from '@/assets/images/starrail/weapon/23005.png'
-import StarRailWeapon23006 from '@/assets/images/starrail/weapon/23006.png'
-import StarRailWeapon23007 from '@/assets/images/starrail/weapon/23007.png'
-import StarRailWeapon23008 from '@/assets/images/starrail/weapon/23008.png'
-import StarRailWeapon23009 from '@/assets/images/starrail/weapon/23009.png'
-import StarRailWeapon23010 from '@/assets/images/starrail/weapon/23010.png'
-import StarRailWeapon23011 from '@/assets/images/starrail/weapon/23011.png'
-import StarRailWeapon23012 from '@/assets/images/starrail/weapon/23012.png'
-import StarRailWeapon23013 from '@/assets/images/starrail/weapon/23013.png'
-import StarRailWeapon23014 from '@/assets/images/starrail/weapon/23014.png'
-import StarRailWeapon23015 from '@/assets/images/starrail/weapon/23015.png'
-import StarRailWeapon23016 from '@/assets/images/starrail/weapon/23016.png'
+import GenshinCharacter10000002 from "@/assets/images/genshin/character/10000002.png";
+import GenshinCharacter10000003 from "@/assets/images/genshin/character/10000003.png";
+import GenshinCharacter10000016 from "@/assets/images/genshin/character/10000016.png";
+import GenshinCharacter10000022 from "@/assets/images/genshin/character/10000022.png";
+import GenshinCharacter10000026 from "@/assets/images/genshin/character/10000026.png";
+import GenshinCharacter10000029 from "@/assets/images/genshin/character/10000029.png";
+import GenshinCharacter10000030 from "@/assets/images/genshin/character/10000030.png";
+import GenshinCharacter10000033 from "@/assets/images/genshin/character/10000033.png";
+import GenshinCharacter10000035 from "@/assets/images/genshin/character/10000035.png";
+import GenshinCharacter10000037 from "@/assets/images/genshin/character/10000037.png";
+import GenshinCharacter10000038 from "@/assets/images/genshin/character/10000038.png";
+import GenshinCharacter10000041 from "@/assets/images/genshin/character/10000041.png";
+import GenshinCharacter10000042 from "@/assets/images/genshin/character/10000042.png";
+import GenshinCharacter10000046 from "@/assets/images/genshin/character/10000046.png";
+import GenshinCharacter10000047 from "@/assets/images/genshin/character/10000047.png";
+import GenshinCharacter10000049 from "@/assets/images/genshin/character/10000049.png";
+import GenshinCharacter10000051 from "@/assets/images/genshin/character/10000051.png";
+import GenshinCharacter10000052 from "@/assets/images/genshin/character/10000052.png";
+import GenshinCharacter10000054 from "@/assets/images/genshin/character/10000054.png";
+import GenshinCharacter10000057 from "@/assets/images/genshin/character/10000057.png";
+import GenshinCharacter10000058 from "@/assets/images/genshin/character/10000058.png";
+import GenshinCharacter10000060 from "@/assets/images/genshin/character/10000060.png";
+import GenshinCharacter10000063 from "@/assets/images/genshin/character/10000063.png";
+import GenshinCharacter10000066 from "@/assets/images/genshin/character/10000066.png";
+import GenshinCharacter10000069 from "@/assets/images/genshin/character/10000069.png";
+import GenshinCharacter10000070 from "@/assets/images/genshin/character/10000070.png";
+import GenshinCharacter10000071 from "@/assets/images/genshin/character/10000071.png";
+import GenshinCharacter10000073 from "@/assets/images/genshin/character/10000073.png";
+import GenshinCharacter10000075 from "@/assets/images/genshin/character/10000075.png";
+import GenshinCharacter10000078 from "@/assets/images/genshin/character/10000078.png";
+import GenshinCharacter10000079 from "@/assets/images/genshin/character/10000079.png";
+import GenshinCharacter10000082 from "@/assets/images/genshin/character/10000082.png";
+import GenshinCharacter10000084 from "@/assets/images/genshin/character/10000084.png";
+import GenshinCharacter10000086 from "@/assets/images/genshin/character/10000086.png";
+import GenshinCharacter10000087 from "@/assets/images/genshin/character/10000087.png";
+import GenshinCharacter10000089 from "@/assets/images/genshin/character/10000089.png";
+import GenshinWeapon11501 from "@/assets/images/genshin/weapon/11501.png";
+import GenshinWeapon11502 from "@/assets/images/genshin/weapon/11502.png";
+import GenshinWeapon11503 from "@/assets/images/genshin/weapon/11503.png";
+import GenshinWeapon11504 from "@/assets/images/genshin/weapon/11504.png";
+import GenshinWeapon11505 from "@/assets/images/genshin/weapon/11505.png";
+import GenshinWeapon11509 from "@/assets/images/genshin/weapon/11509.png";
+import GenshinWeapon11510 from "@/assets/images/genshin/weapon/11510.png";
+import GenshinWeapon11511 from "@/assets/images/genshin/weapon/11511.png";
+import GenshinWeapon11512 from "@/assets/images/genshin/weapon/11512.png";
+import GenshinWeapon11513 from "@/assets/images/genshin/weapon/11513.png";
+import GenshinWeapon12501 from "@/assets/images/genshin/weapon/12501.png";
+import GenshinWeapon12502 from "@/assets/images/genshin/weapon/12502.png";
+import GenshinWeapon12503 from "@/assets/images/genshin/weapon/12503.png";
+import GenshinWeapon12504 from "@/assets/images/genshin/weapon/12504.png";
+import GenshinWeapon12510 from "@/assets/images/genshin/weapon/12510.png";
+import GenshinWeapon12511 from "@/assets/images/genshin/weapon/12511.png";
+import GenshinWeapon13501 from "@/assets/images/genshin/weapon/13501.png";
+import GenshinWeapon13502 from "@/assets/images/genshin/weapon/13502.png";
+import GenshinWeapon13504 from "@/assets/images/genshin/weapon/13504.png";
+import GenshinWeapon13505 from "@/assets/images/genshin/weapon/13505.png";
+import GenshinWeapon13507 from "@/assets/images/genshin/weapon/13507.png";
+import GenshinWeapon13509 from "@/assets/images/genshin/weapon/13509.png";
+import GenshinWeapon13511 from "@/assets/images/genshin/weapon/13511.png";
+import GenshinWeapon14501 from "@/assets/images/genshin/weapon/14501.png";
+import GenshinWeapon14502 from "@/assets/images/genshin/weapon/14502.png";
+import GenshinWeapon14504 from "@/assets/images/genshin/weapon/14504.png";
+import GenshinWeapon14505 from "@/assets/images/genshin/weapon/14505.png";
+import GenshinWeapon14506 from "@/assets/images/genshin/weapon/14506.png";
+import GenshinWeapon14509 from "@/assets/images/genshin/weapon/14509.png";
+import GenshinWeapon14511 from "@/assets/images/genshin/weapon/14511.png";
+import GenshinWeapon14512 from "@/assets/images/genshin/weapon/14512.png";
+import GenshinWeapon14513 from "@/assets/images/genshin/weapon/14513.png";
+import GenshinWeapon14514 from "@/assets/images/genshin/weapon/14514.png";
+import GenshinWeapon15501 from "@/assets/images/genshin/weapon/15501.png";
+import GenshinWeapon15502 from "@/assets/images/genshin/weapon/15502.png";
+import GenshinWeapon15503 from "@/assets/images/genshin/weapon/15503.png";
+import GenshinWeapon15507 from "@/assets/images/genshin/weapon/15507.png";
+import GenshinWeapon15508 from "@/assets/images/genshin/weapon/15508.png";
+import GenshinWeapon15509 from "@/assets/images/genshin/weapon/15509.png";
+import GenshinWeapon15511 from "@/assets/images/genshin/weapon/15511.png";
+import GenshinWeapon15512 from "@/assets/images/genshin/weapon/15512.png";
+import StarRailCharacter1003 from "@/assets/images/starrail/character/1003.png";
+import StarRailCharacter1004 from "@/assets/images/starrail/character/1004.png";
+import StarRailCharacter1005 from "@/assets/images/starrail/character/1005.png";
+import StarRailCharacter1006 from "@/assets/images/starrail/character/1006.png";
+import StarRailCharacter1101 from "@/assets/images/starrail/character/1101.png";
+import StarRailCharacter1102 from "@/assets/images/starrail/character/1102.png";
+import StarRailCharacter1104 from "@/assets/images/starrail/character/1104.png";
+import StarRailCharacter1107 from "@/assets/images/starrail/character/1107.png";
+import StarRailCharacter1112 from "@/assets/images/starrail/character/1112.png";
+import StarRailCharacter1203 from "@/assets/images/starrail/character/1203.png";
+import StarRailCharacter1204 from "@/assets/images/starrail/character/1204.png";
+import StarRailCharacter1205 from "@/assets/images/starrail/character/1205.png";
+import StarRailCharacter1208 from "@/assets/images/starrail/character/1208.png";
+import StarRailCharacter1209 from "@/assets/images/starrail/character/1209.png";
+import StarRailCharacter1211 from "@/assets/images/starrail/character/1211.png";
+import StarRailCharacter1212 from "@/assets/images/starrail/character/1212.png";
+import StarRailCharacter1213 from "@/assets/images/starrail/character/1213.png";
+import StarRailWeapon23000 from "@/assets/images/starrail/weapon/23000.png";
+import StarRailWeapon23001 from "@/assets/images/starrail/weapon/23001.png";
+import StarRailWeapon23002 from "@/assets/images/starrail/weapon/23002.png";
+import StarRailWeapon23003 from "@/assets/images/starrail/weapon/23003.png";
+import StarRailWeapon23004 from "@/assets/images/starrail/weapon/23004.png";
+import StarRailWeapon23005 from "@/assets/images/starrail/weapon/23005.png";
+import StarRailWeapon23006 from "@/assets/images/starrail/weapon/23006.png";
+import StarRailWeapon23007 from "@/assets/images/starrail/weapon/23007.png";
+import StarRailWeapon23008 from "@/assets/images/starrail/weapon/23008.png";
+import StarRailWeapon23009 from "@/assets/images/starrail/weapon/23009.png";
+import StarRailWeapon23010 from "@/assets/images/starrail/weapon/23010.png";
+import StarRailWeapon23011 from "@/assets/images/starrail/weapon/23011.png";
+import StarRailWeapon23012 from "@/assets/images/starrail/weapon/23012.png";
+import StarRailWeapon23013 from "@/assets/images/starrail/weapon/23013.png";
+import StarRailWeapon23014 from "@/assets/images/starrail/weapon/23014.png";
+import StarRailWeapon23015 from "@/assets/images/starrail/weapon/23015.png";
+import StarRailWeapon23016 from "@/assets/images/starrail/weapon/23016.png";
 
 // HACK: These static resources only contain five-star!
 
@@ -146,7 +148,8 @@ const Genshin = {
     白术: [10000082, GenshinCharacter10000082],
     林尼: [10000084, GenshinCharacter10000084],
     莱欧斯利: [10000086, GenshinCharacter10000086],
-    那维莱特: [10000087, GenshinCharacter10000087]
+    那维莱特: [10000087, GenshinCharacter10000087],
+    芙宁娜: [10000089, GenshinCharacter10000089],
   },
   weapon: {
     风鹰剑: [11501, GenshinWeapon11501],
@@ -158,6 +161,7 @@ const Genshin = {
     波乱月白经津: [11510, GenshinWeapon11510],
     圣显之钥: [11511, GenshinWeapon11511],
     裁叶萃光: [11512, GenshinWeapon11512],
+    静水流涌之辉: [11513, GenshinWeapon11513],
     天空之傲: [12501, GenshinWeapon12501],
     狼的末路: [12502, GenshinWeapon12502],
     松籁响起之时: [12503, GenshinWeapon12503],
@@ -188,9 +192,9 @@ const Genshin = {
     若水: [15508, GenshinWeapon15508],
     飞雷之弦振: [15509, GenshinWeapon15509],
     猎人之径: [15511, GenshinWeapon15511],
-    最初的大魔术: [15512, GenshinWeapon15512]
-  }
-} as const
+    最初的大魔术: [15512, GenshinWeapon15512],
+  },
+} as const;
 
 const StarRail = {
   character: {
@@ -210,7 +214,7 @@ const StarRail = {
     1209: [1209, StarRailCharacter1209],
     1211: [1211, StarRailCharacter1211],
     1212: [1212, StarRailCharacter1212],
-    1213: [1213, StarRailCharacter1213]
+    1213: [1213, StarRailCharacter1213],
   },
   weapon: {
     23000: [23000, StarRailWeapon23000],
@@ -229,24 +233,21 @@ const StarRail = {
     23013: [23013, StarRailWeapon23013],
     23014: [23014, StarRailWeapon23014],
     23015: [23015, StarRailWeapon23015],
-    23016: [23016, StarRailWeapon23016]
-  }
-} as const
+    23016: [23016, StarRailWeapon23016],
+  },
+} as const;
 
 const Assets = {
   genshin: Genshin,
-  starrail: StarRail
-}
+  starrail: StarRail,
+};
 
-export function lookupAssetIcon (
+export function lookupAssetIcon(
   facet: keyof typeof Assets,
-  category: 'character' | 'weapon',
+  category: "character" | "weapon",
   nameOrId: string
 ): [number, string] | undefined {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return Assets
-    ?.[facet]
-    ?.[category]
-    ?.[nameOrId]
+  return Assets?.[facet]?.[category]?.[nameOrId];
 }

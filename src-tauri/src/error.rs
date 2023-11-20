@@ -30,9 +30,6 @@ pub enum Error {
   #[error("Web Caches")]
   WebCaches,
 
-  #[error("Web Caches")]
-  WebCaches,
-
   #[error("Illegal Gacha Url")]
   IllegalGachaUrl,
 

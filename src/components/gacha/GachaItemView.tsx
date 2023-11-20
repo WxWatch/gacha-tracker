@@ -14,8 +14,8 @@ export interface GachaItemViewProps {
   name: string;
   id: string;
   isWeapon: boolean;
-  rank: 3 | 4 | 5 | "3" | "4" | "5";
-  size: number;
+  rank: string;
+  size?: number;
   usedPity?: number;
   restricted?: boolean;
   time?: string | Date;

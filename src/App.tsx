@@ -22,7 +22,7 @@ export default function App() {
     <Theme>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
-        <ReactQueryDevtools position="bottom-right" />
+        <ReactQueryDevtools position="bottom" />
       </QueryClientProvider>
     </Theme>
   );

@@ -18,28 +18,28 @@ pub async fn legacy_migration<P: AsRef<Path>>(
   legacy_database: P,
   destination_database: P,
 ) -> anyhow::Result<()> {
-    debug!("Starting legacy migration...");
-    debug!("Legacy database: {:?}", legacy_database.as_ref());
-    debug!("Destination database: {:?}", destination_database.as_ref());
+  debug!("Starting legacy migration...");
+  debug!("Legacy database: {:?}", legacy_database.as_ref());
+  debug!("Destination database: {:?}", destination_database.as_ref());
 
-    let legacy_database = {
-        let url = format!("sqlite://{}?mode=ro", legacy_database.as_ref().display());
-        debug!("Connecting to legacy database: {}", url);
-        let mut opts = ConnectOptions::new(url);
-        opts.sqlx_logging_level(tracing::log::LevelFilter::Trace);
-        Database::connect(opts).await?
-    };
+  let legacy_database = {
+    let url = format!("sqlite://{}?mode=ro", legacy_database.as_ref().display());
+    debug!("Connecting to legacy database: {}", url);
+    let mut opts = ConnectOptions::new(url);
+    opts.sqlx_logging_level(tracing::log::LevelFilter::Trace);
+    Database::connect(opts).await?
+  };
 
-    let destination = Storage::new_with_database_file(destination_database.as_ref()).await?;
-    destination.initialize().await?;
+  let destination = Storage::new_with_database_file(destination_database.as_ref()).await?;
+  destination.initialize().await?;
 
-    debug!("Transaction started...");
-    let txn = destination.database.begin().await?;
+  debug!("Transaction started...");
+  let txn = destination.database.begin().await?;
 
-    debug!("Finding legacy genshin records...");
-    let mut stream = GenshinGachaRecordLegacyEntity::find()
-        .stream(&legacy_database)
-        .await?;
+  debug!("Finding legacy genshin records...");
+  let mut stream = GenshinGachaRecordLegacyEntity::find()
+    .stream(&legacy_database)
+    .await?;
 
   let mut count = 0;
   while let Some(legacy) = stream.try_next().await? {
@@ -53,15 +53,15 @@ pub async fn legacy_migration<P: AsRef<Path>>(
       .exec_without_returning(&txn)
       .await?;
 
-        count += 1;
-    }
+    count += 1;
+  }
 
-    debug!("Total legacy genshin records: {}", count);
-    debug!("Transaction commit...");
-    txn.commit().await?;
+  debug!("Total legacy genshin records: {}", count);
+  debug!("Transaction commit...");
+  txn.commit().await?;
 
-    debug!("Completed legacy migration");
-    Ok(())
+  debug!("Completed legacy migration");
+  Ok(())
 }
 
 // Convert Genshin legacy model to active model
@@ -88,4 +88,5 @@ impl From<GenshinGachaRecordLegacyModel> for GenshinGachaRecordActiveModel {
       item_type: ActiveValue::Set(item_type.to_owned()),
       rank_type: ActiveValue::Set(value.rank_type),
     }
+  }
 }

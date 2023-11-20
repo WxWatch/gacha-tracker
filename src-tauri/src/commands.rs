@@ -1,8 +1,3 @@
-extern crate futures;
-extern crate reqwest;
-extern crate serde;
-extern crate tauri;
-
 use crate::constants;
 use crate::error::Result;
 use reqwest::Client as Reqwest;
@@ -11,10 +6,10 @@ use tauri::{Invoke, Runtime};
 
 pub fn get_handlers<R: Runtime>() -> Box<dyn Fn(Invoke<R>) + Send + Sync> {
   Box::new(tauri::generate_handler![
-    get_current_exe_dir
-      get_version,
-      get_latest_version,
-      update_app
+    get_current_exe_dir,
+    get_version,
+    get_latest_version,
+    update_app
   ])
 }
 
@@ -71,7 +66,7 @@ async fn get_latest_version() -> Result<LatestVersion> {
   Ok(
     Reqwest::builder()
       .build()?
-      .get("https://raw.githubusercontent.com/WxWatch/gacha-tracker/main/manifest.json")
+      .get("https://hoyo-gacha.lgou2w.com/release/latest")
       .send()
       .await?
       .json::<LatestVersion>()
