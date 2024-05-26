@@ -76,6 +76,11 @@ async fn find_gacha_url(
             )
             .await?
         }
+        AccountFacet::WutheringWaves => {
+            let gacha_urls = WutheringWavesGacha.find_gacha_urls(game_data_dir)?;
+            find_gacha_url_and_validate_consistency(&StarRailGacha, &facet, &uid, &gacha_urls)
+                .await?
+        }
     };
 
     Ok(gacha_url.to_string())
