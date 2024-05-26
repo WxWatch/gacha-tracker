@@ -11,8 +11,8 @@ use super::utilities::{
     lookup_path_line_from_keyword, lookup_valid_cache_data_dir,
 };
 use super::{
-    GachaRecord, GachaRecordFetcher, GachaRecordFetcherChannel, GachaUrl, GachaUrlFinder,
-    GameDataDirectoryFinder,
+    GachaRecord, GachaRecordFetcherChannel, GachaUrl, GameDataDirectoryFinder,
+    MihoyoGachaRecordFetcher, MihoyoGachaUrlFinder,
 };
 
 use crate::error::Result;
@@ -50,7 +50,7 @@ impl GameDataDirectoryFinder for GenshinGacha {
 const ENDPOINT: &str = "/event/gacha_info/api/getGachaLog?";
 // const ENDPOINT: &str = "e20190909gacha-v2";
 
-impl GachaUrlFinder for GenshinGacha {
+impl MihoyoGachaUrlFinder for GenshinGacha {
     fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
         // See: https://github.com/lgou2w/HoYo.Gacha/issues/10
         let cache_data_dir = lookup_valid_cache_data_dir(game_data_dir)?;
@@ -103,7 +103,7 @@ pub(crate) struct GenshinGachaRecordPagination {
 }
 
 #[async_trait]
-impl GachaRecordFetcher for GenshinGacha {
+impl MihoyoGachaRecordFetcher for GenshinGacha {
     type Target = GenshinGachaRecord;
 
     async fn fetch_gacha_records(

@@ -8,9 +8,11 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
+use super::utilities::fetch_gacha_records;
 use super::{
-    GachaRecord, GachaRecordFetcher, GachaRecordFetcherChannel, GachaUrl, GachaUrlFinder,
-    GameDataDirectoryFinder,
+    fetch_kuro_gacha_records, GachaRecord, GachaRecordFetcherChannel, GachaUrl,
+    GameDataDirectoryFinder, KuroGachaRecordFetcher, KuroGachaRecordFetcherChannel,
+    MihoyoGachaRecordFetcher, MihoyoGachaUrlFinder, StarRailGachaRecord,
 };
 
 use crate::error::Result;
@@ -35,9 +37,9 @@ impl GameDataDirectoryFinder for WutheringWavesGacha {
 }
 
 /// Gacha URL
-const ENDPOINT: &str = "aki/gacha/index.html";
+const ENDPOINT: &str = "aki/gacha/index.html#/record?";
 
-impl GachaUrlFinder for WutheringWavesGacha {
+impl MihoyoGachaUrlFinder for WutheringWavesGacha {
     fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
         let mut result = Vec::new();
 
@@ -54,7 +56,7 @@ impl GachaUrlFinder for WutheringWavesGacha {
                 let url = &links[0];
                 println!("{:?}", url.as_str());
                 result.push(GachaUrl {
-                    addr: 0,
+                    addr: None,
                     creation_time: OffsetDateTime::now_utc(),
                     value: url.as_str().to_string(),
                 })
@@ -72,6 +74,13 @@ pub struct WutheringWavesGachaRecord {
     pub uid: String,
     pub gacha_id: String,
     pub gacha_type: String,
+    pub cardPoolType: String,
+    pub resourceId: i8,
+    pub qualityLevel: i8,
+    pub resourceType: String,
+    pub name: String,
+    pub count: i8,
+    pub time: String,
 }
 
 impl GachaRecord for WutheringWavesGachaRecord {
@@ -88,4 +97,39 @@ impl PartialOrd for WutheringWavesGachaRecord {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.id.partial_cmp(&other.id)
     }
+}
+
+/// Gacha Record Fetcher
+#[async_trait]
+impl KuroGachaRecordFetcher for WutheringWavesGacha {
+    type Target = WutheringWavesGachaRecord;
+
+    async fn fetch_gacha_records(
+        &self,
+        reqwest: &Reqwest,
+        gacha_url: &str,
+        gacha_type: Option<&str>,
+    ) -> Result<Option<Vec<Self::Target>>> {
+        let response = fetch_kuro_gacha_records::<Vec<WutheringWavesGachaRecord>>(
+            reqwest, ENDPOINT, gacha_url, gacha_type,
+        )
+        .await?;
+
+        println!("Ze data {:?}", response.data);
+        Ok(response.data)
+    }
+
+    async fn fetch_gacha_records_any_uid(
+        &self,
+        reqwest: &Reqwest,
+        gacha_url: &str,
+    ) -> Result<Option<String>> {
+        let result = self.fetch_gacha_records(reqwest, gacha_url, None).await?;
+        Ok(result.and_then(|gacha_records| gacha_records.first().map(|record| record.uid.clone())))
+    }
+}
+
+#[async_trait]
+impl KuroGachaRecordFetcherChannel<WutheringWavesGachaRecord> for WutheringWavesGacha {
+    type Fetcher = Self;
 }

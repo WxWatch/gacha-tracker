@@ -12,8 +12,8 @@ use super::utilities::{
     lookup_mihoyo_dir, lookup_path_line_from_keyword, lookup_valid_cache_data_dir,
 };
 use super::{
-    GachaRecord, GachaRecordFetcher, GachaRecordFetcherChannel, GachaUrl, GachaUrlFinder,
-    GameDataDirectoryFinder,
+    GachaRecord, GachaRecordFetcherChannel, GachaUrl, GameDataDirectoryFinder,
+    MihoyoGachaRecordFetcher, MihoyoGachaUrlFinder,
 };
 
 use crate::error::Result;
@@ -59,7 +59,7 @@ impl GameDataDirectoryFinder for StarRailGacha {
 
 const ENDPOINT: &str = "/common/gacha_record/api/getGachaLog?";
 
-impl GachaUrlFinder for StarRailGacha {
+impl MihoyoGachaUrlFinder for StarRailGacha {
     fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
         // See: https://github.com/lgou2w/HoYo.Gacha/issues/10
         let cache_data_dir = lookup_valid_cache_data_dir(game_data_dir)?;
@@ -114,7 +114,7 @@ pub(crate) struct StarRailGachaRecordPagination {
 }
 
 #[async_trait]
-impl GachaRecordFetcher for StarRailGacha {
+impl MihoyoGachaRecordFetcher for StarRailGacha {
     type Target = StarRailGachaRecord;
 
     async fn fetch_gacha_records(

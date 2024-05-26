@@ -100,7 +100,7 @@ impl Storage {
             let statement1 = create_index_statements(GenshinGachaRecordEntity);
             let statement2 = create_index_statements(StarRailGachaRecordEntity);
             let statement3 = create_index_statements(AccountEntity);
-            let statement4 = create_index_statements(WutheringWavesGachaRecordEntity);
+            let statement5 = create_index_statements(WutheringWavesGachaRecordEntity);
 
             // Account: facet + uid constraint
             let statement4 = Index::create()
@@ -120,6 +120,7 @@ impl Storage {
             let mut statements = statement1;
             statements.extend(statement2);
             statements.extend(statement3);
+            statements.extend(statement5);
             statements.push(statement4);
             execute_statements(&self.database, &statements).await?;
         }

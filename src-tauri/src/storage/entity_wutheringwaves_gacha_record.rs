@@ -15,6 +15,13 @@ pub struct Model {
     pub gacha_id: String,
     #[sea_orm(indexed)]
     pub gacha_type: String,
+    pub cardPoolType: String,
+    pub resourceId: i8,
+    pub qualityLevel: i8,
+    pub resourceType: String,
+    pub name: String,
+    pub count: i8,
+    pub time: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -31,6 +38,13 @@ impl From<WutheringWavesGachaRecord> for ActiveModel {
             uid: ActiveValue::set(value.uid),
             gacha_id: ActiveValue::set(value.gacha_id),
             gacha_type: ActiveValue::set(value.gacha_type),
+            cardPoolType: ActiveValue::set(value.cardPoolType),
+            resourceId: ActiveValue::set(value.resourceId),
+            qualityLevel: ActiveValue::set(value.qualityLevel),
+            resourceType: ActiveValue::set(value.resourceType),
+            name: ActiveValue::set(value.name),
+            count: ActiveValue::set(value.count),
+            time: ActiveValue::set(value.time),
         }
     }
 }
@@ -42,6 +56,13 @@ impl From<Model> for WutheringWavesGachaRecord {
             uid: value.uid,
             gacha_id: value.gacha_id,
             gacha_type: value.gacha_type,
+            cardPoolType: value.cardPoolType,
+            resourceId: value.resourceId,
+            qualityLevel: value.qualityLevel,
+            resourceType: value.resourceType,
+            name: value.name,
+            count: value.count,
+            time: value.time,
         }
     }
 }

@@ -2,12 +2,16 @@ extern crate reqwest;
 extern crate tauri;
 extern crate time;
 
+use super::create_kuro_fetcher_channel;
 use super::srgf;
 use super::uigf;
-use super::utilities::{create_default_reqwest, find_gacha_url_and_validate_consistency};
+use super::utilities::find_kuro_gacha_url_and_validate_consistency;
+use super::utilities::{create_default_reqwest, find_mihoyo_gacha_url_and_validate_consistency};
+use super::GachaUrl;
+use super::KuroGachaRecordFetcherChannelFragment;
 use super::{
-    create_fetcher_channel, GachaRecordFetcherChannelFragment, GachaUrlFinder,
-    GameDataDirectoryFinder, GenshinGacha, StarRailGacha, WutheringWavesGacha,
+    create_mihoyo_fetcher_channel, GachaRecordFetcherChannelFragment, GameDataDirectoryFinder,
+    GenshinGacha, MihoyoGachaUrlFinder, StarRailGacha, WutheringWavesGacha,
 };
 use crate::constants;
 use crate::error::{Error, Result};
@@ -37,21 +41,31 @@ async fn find_gacha_url(
     uid: String,
     game_data_dir: PathBuf,
 ) -> Result<String> {
-    let gacha_url = match facet {
+    let gacha_url: GachaUrl = match facet {
         AccountFacet::Genshin => {
             let gacha_urls = GenshinGacha.find_gacha_urls(game_data_dir)?;
-            find_gacha_url_and_validate_consistency(&GenshinGacha, &facet, &uid, &gacha_urls)
+            find_mihoyo_gacha_url_and_validate_consistency(&GenshinGacha, &facet, &uid, &gacha_urls)
                 .await?
         }
         AccountFacet::StarRail => {
             let gacha_urls = StarRailGacha.find_gacha_urls(game_data_dir)?;
-            find_gacha_url_and_validate_consistency(&StarRailGacha, &facet, &uid, &gacha_urls)
-                .await?
+            find_mihoyo_gacha_url_and_validate_consistency(
+                &StarRailGacha,
+                &facet,
+                &uid,
+                &gacha_urls,
+            )
+            .await?
         }
         AccountFacet::WutheringWaves => {
             let gacha_urls = WutheringWavesGacha.find_gacha_urls(game_data_dir)?;
-            find_gacha_url_and_validate_consistency(&StarRailGacha, &facet, &uid, &gacha_urls)
-                .await?
+            find_kuro_gacha_url_and_validate_consistency(
+                &WutheringWavesGacha,
+                &facet,
+                &uid,
+                &gacha_urls,
+            )
+            .await?
         }
     };
 
@@ -77,7 +91,7 @@ async fn pull_all_gacha_records(
 
     match facet {
         AccountFacet::Genshin => {
-            create_fetcher_channel(
+            create_mihoyo_fetcher_channel(
                 GenshinGacha,
                 reqwest,
                 GenshinGacha,
@@ -96,7 +110,7 @@ async fn pull_all_gacha_records(
             .await?
         }
         AccountFacet::StarRail => {
-            create_fetcher_channel(
+            create_mihoyo_fetcher_channel(
                 StarRailGacha,
                 reqwest,
                 StarRailGacha,
@@ -115,17 +129,17 @@ async fn pull_all_gacha_records(
             .await?
         }
         AccountFacet::WutheringWaves => {
-            create_fetcher_channel(
-                StarRailGacha,
+            create_kuro_fetcher_channel(
+                WutheringWavesGacha,
                 reqwest,
-                StarRailGacha,
+                WutheringWavesGacha,
                 gacha_url,
                 gacha_type_and_last_end_id_mappings,
                 |fragment| async {
                     window.emit(&event_channel, &fragment)?;
                     if save_to_storage {
-                        if let GachaRecordFetcherChannelFragment::Data(data) = fragment {
-                            storage.save_starrail_gacha_records(&data).await?;
+                        if let KuroGachaRecordFetcherChannelFragment::Data(data) = fragment {
+                            storage.save_wutheringwaves_gacha_records(&data).await?;
                         }
                     }
                     Ok(())
