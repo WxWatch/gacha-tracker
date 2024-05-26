@@ -13,6 +13,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoSrc from "@/assets/images/Logo.webp";
 import StarRailLogoSrc from "@/assets/images/starrail/starrail-icon.jpeg";
 import GenshinLogoSrc from "@/assets/images/genshin/genshin-icon.jpeg";
+import WutheringWavesLogoSrc from "@/assets/images/wutheringwaves/wutheringwaves-logo.png";
 import PaimonTreasureSrc from "@/assets/images/Paimon.png";
 
 export const SidebarWidth = "96px";
@@ -68,6 +69,11 @@ const Navs: Nav[] = [
     title: "Honkai: Star Rail",
     href: "/starrail",
     icon: <GameIcon src={StarRailLogoSrc} />,
+  },
+  {
+    title: "Wuthering Waves",
+    href: "/wutheringwaves",
+    icon: <GameIcon src={WutheringWavesLogoSrc} />,
   },
 ];
 

@@ -40,7 +40,7 @@ export default function AccountMenu() {
             {displayName}
           </Typography>
           <Typography variant="caption" lineHeight={1} textTransform="none">
-            {selectedAccount?.uid || "NULL UID"}
+            {selectedAccount?.uid || "No UID"}
           </Typography>
         </Stack>
       </Button>

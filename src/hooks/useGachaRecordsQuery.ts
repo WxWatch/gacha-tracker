@@ -207,6 +207,12 @@ const KnownCategoryTitles: Record<
     permanent: "Regular",
     newbie: "Starter",
   },
+  [AccountFacet.WutheringWaves]: {
+    character: "Character",
+    weapon: "Light Cone",
+    permanent: "Regular",
+    newbie: "Starter",
+  },
 };
 
 const isRankTypeOfBlue = (record: GachaRecord) => record.rank_type === "3";

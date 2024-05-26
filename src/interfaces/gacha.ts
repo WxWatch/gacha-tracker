@@ -28,3 +28,8 @@ export interface StarRailGachaRecord {
   item_type: string; // 角色 | 光锥
   rank_type: string; // 3 | 4 | 5
 }
+
+// See: src-tauri/src/gacha/impl_wutheringwaves.rs
+export interface WutheringWavesGachaRecord {
+  id: string;
+}

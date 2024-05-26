@@ -5,6 +5,7 @@
 export enum AccountFacet {
   Genshin = "genshin",
   StarRail = "starrail",
+  WutheringWaves = "wutheringwaves",
 }
 
 export interface KnownAccountProperties {
@@ -41,6 +42,8 @@ export function resolveAccountDisplayName(
       ? "Traveler"
       : facet === AccountFacet.StarRail
       ? "Trailblazer"
+      : facet === AccountFacet.WutheringWaves
+      ? "Rover"
       : "NULL")
   );
 }
@@ -65,6 +68,11 @@ export function resolveCurrency(facet: AccountFacet): {
       return {
         currency: "Stellar Jade",
         action: { singular: "Warp", plural: "Warps" },
+      };
+    case AccountFacet.WutheringWaves:
+      return {
+        currency: "Astrite",
+        action: { singular: "Convene", plural: "Convenes" },
       };
     default:
       throw new Error(`Unknown account facet: ${facet}`);
