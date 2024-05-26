@@ -78,8 +78,13 @@ async fn find_gacha_url(
         }
         AccountFacet::WutheringWaves => {
             let gacha_urls = WutheringWavesGacha.find_gacha_urls(game_data_dir)?;
-            find_gacha_url_and_validate_consistency(&StarRailGacha, &facet, &uid, &gacha_urls)
-                .await?
+            find_kuro_gacha_url_and_validate_consistency(
+                &WutheringWavesGacha,
+                &facet,
+                &uid,
+                &gacha_urls,
+            )
+            .await?
         }
     };
 
@@ -105,7 +110,7 @@ async fn pull_all_gacha_records(
 
     match facet {
         AccountFacet::Genshin => {
-            create_fetcher_channel(
+            create_mihoyo_fetcher_channel(
                 GenshinGacha,
                 reqwest,
                 GenshinGacha,
@@ -124,7 +129,7 @@ async fn pull_all_gacha_records(
             .await?
         }
         AccountFacet::StarRail => {
-            create_fetcher_channel(
+            create_mihoyo_fetcher_channel(
                 StarRailGacha,
                 reqwest,
                 StarRailGacha,

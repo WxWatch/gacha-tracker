@@ -7,16 +7,27 @@ extern crate tokio;
 extern crate url;
 
 use crate::error::{Error, Result};
-use crate::gacha::GachaRecord;
 use async_trait::async_trait;
 use reqwest::Client as Reqwest;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use std::any::Any;
 use std::collections::BTreeMap;
 use std::future::Future;
+use std::path::{Path, PathBuf};
+use time::OffsetDateTime;
+
+use super::{GachaRecord, GachaUrl};
+
+/// Gacha Url Finder
+
+pub trait MihoyoGachaUrlFinder {
+    fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>>;
+}
 
 /// Gacha Record Fetcher
+
 #[async_trait]
-pub trait HoyoverseGachaRecordFetcher {
+pub trait MihoyoGachaRecordFetcher {
     type Target: GachaRecord;
 
     async fn fetch_gacha_records(
@@ -34,8 +45,7 @@ pub trait HoyoverseGachaRecordFetcher {
     ) -> Result<Option<String>>;
 }
 
-impl std::ops::Deref for GachaUrl {
-    type Target = String;
+/// Gacha Record Fetcher Channel
 
 #[allow(unused)]
 #[derive(Debug, Clone, Serialize)]
@@ -50,7 +60,7 @@ pub enum GachaRecordFetcherChannelFragment<T: GachaRecord + Sized + Serialize + 
 
 #[async_trait]
 pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + Sync> {
-    type Fetcher: HoyoverseGachaRecordFetcher<Target = T> + Send + Sync;
+    type Fetcher: MihoyoGachaRecordFetcher<Target = T> + Send + Sync;
 
     async fn pull_gacha_records(
         &self,
@@ -156,4 +166,42 @@ pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + 
         }
         Ok(())
     }
+}
+
+pub async fn create_mihoyo_fetcher_channel<Record, FetcherChannel, F, Fut>(
+    fetcher_channel: FetcherChannel,
+    reqwest: Reqwest,
+    fetcher: FetcherChannel::Fetcher,
+    gacha_url: String,
+    gacha_type_and_last_end_id_mappings: BTreeMap<String, Option<String>>,
+    receiver_fn: F,
+) -> Result<()>
+where
+    Record: GachaRecord + Sized + Serialize + Send + Sync,
+    FetcherChannel: GachaRecordFetcherChannel<Record> + Send + Sync + 'static,
+    F: Fn(GachaRecordFetcherChannelFragment<Record>) -> Fut,
+    Fut: Future<Output = Result<()>>,
+{
+    use tokio::spawn;
+    use tokio::sync::mpsc::channel;
+
+    let (sender, mut receiver) = channel(1);
+    let task = spawn(async move {
+        fetcher_channel
+            .pull_all_gacha_records(
+                &reqwest,
+                &fetcher,
+                &sender,
+                &gacha_url,
+                &gacha_type_and_last_end_id_mappings,
+            )
+            .await
+    });
+
+    while let Some(fragment) = receiver.recv().await {
+        receiver_fn(fragment).await?;
+    }
+
+    task.await
+        .map_err(|_| Error::GachaRecordFetcherChannelJoin)?
 }

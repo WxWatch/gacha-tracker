@@ -58,7 +58,7 @@ impl GameDataDirectoryFinder for StarRailGacha {
 
 const ENDPOINT: &str = "/common/gacha_record/api/getGachaLog?";
 
-impl GachaUrlFinder for StarRailGacha {
+impl MihoyoGachaUrlFinder for StarRailGacha {
     fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
         // See: https://github.com/lgou2w/HoYo.Gacha/issues/10
         let cache_data_dir = lookup_valid_cache_data_dir(game_data_dir)?;
