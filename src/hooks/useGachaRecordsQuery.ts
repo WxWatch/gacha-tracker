@@ -3,7 +3,6 @@
 import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { AccountFacet, Account, resolveCurrency } from "@/interfaces/account";
-
 import * as _ from "lodash";
 import {
   AdvancedMihoyoRecordsMetadata,

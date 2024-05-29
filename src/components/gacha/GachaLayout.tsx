@@ -25,6 +25,7 @@ export default function GachaLayout(props: GachaLayoutProps) {
     error,
   } = useGachaRecordsQuery(facet, selectedAccountUid);
 
+  console.log("gacha records", gachaRecords);
   // Layout state
   const [{ tab, alert }, produceState] = useImmer({
     tab: 0,

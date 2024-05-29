@@ -50,7 +50,7 @@ impl GameDataDirectoryFinder for GenshinGacha {
 const ENDPOINT: &str = "/api/getGachaLog?";
 // const ENDPOINT: &str = "e20190909gacha-v2";
 
-impl MihoyoGachaUrlFinder for GenshinGacha {
+impl GachaUrlFinder for GenshinGacha {
     fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
         // See: https://github.com/lgou2w/HoYo.Gacha/issues/10
         let cache_data_dir = lookup_valid_cache_data_dir(game_data_dir)?;

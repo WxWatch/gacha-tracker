@@ -110,7 +110,7 @@ async fn pull_all_gacha_records(
 
     match facet {
         AccountFacet::Genshin => {
-            create_mihoyo_fetcher_channel(
+            create_fetcher_channel(
                 GenshinGacha,
                 reqwest,
                 GenshinGacha,
@@ -129,7 +129,7 @@ async fn pull_all_gacha_records(
             .await?
         }
         AccountFacet::StarRail => {
-            create_mihoyo_fetcher_channel(
+            create_fetcher_channel(
                 StarRailGacha,
                 reqwest,
                 StarRailGacha,
