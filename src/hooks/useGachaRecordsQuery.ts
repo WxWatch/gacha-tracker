@@ -8,7 +8,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { AccountFacet, Account, resolveCurrency } from "@/interfaces/account";
-import { GenshinGachaRecord, StarRailGachaRecord } from "@/interfaces/gacha";
+import {
+  GenshinGachaRecord,
+  StarRailGachaRecord,
+  WutheringWavesGachaRecord,
+} from "@/interfaces/gacha";
 import PluginStorage from "@/utilities/plugin-storage";
 import * as _ from "lodash";
 
@@ -191,6 +195,19 @@ const KnownStarRailGachaTypes: Record<
   12: "weapon",
 };
 
+const KnownWutheringWavesGachaTypes: Record<
+  WutheringWavesGachaRecord["gacha_type"],
+  NamedGachaRecords["category"]
+> = {
+  1: "character",
+  2: "character",
+  3: "permanent",
+  4: "weapon",
+  5: "newbie",
+  6: "newbie",
+  7: "newbie",
+};
+
 const KnownCategoryTitles: Record<
   AccountFacet,
   Record<NamedGachaRecords["category"], string>
@@ -208,10 +225,10 @@ const KnownCategoryTitles: Record<
     newbie: "Starter",
   },
   [AccountFacet.WutheringWaves]: {
-    character: "Character",
-    weapon: "Light Cone",
-    permanent: "Regular",
-    newbie: "Starter",
+    character: "Featured Resonator",
+    weapon: "Standard Weapon",
+    permanent: "Standard Resonator",
+    newbie: "Beginner",
   },
 };
 
@@ -245,7 +262,9 @@ function computeNamedGachaRecords(
   const categories =
     facet === AccountFacet.Genshin
       ? KnownGenshinGachaTypes
-      : KnownStarRailGachaTypes;
+      : facet === AccountFacet.StarRail
+      ? KnownStarRailGachaTypes
+      : KnownWutheringWavesGachaTypes;
   const { action: currencyAction } = resolveCurrency(facet);
 
   return Object.entries(categories).reduce((acc, [gachaType, category]) => {

@@ -2,7 +2,10 @@ use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 
 use crate::error::Result;
-use std::{any::Any, path::PathBuf};
+use std::{
+    any::Any,
+    path::{Path, PathBuf},
+};
 
 /// Game Directory
 pub trait GameDataDirectoryFinder {
@@ -36,4 +39,9 @@ impl std::ops::Deref for GachaUrl {
     fn deref(&self) -> &Self::Target {
         &self.value
     }
+}
+
+/// Gacha Url Finder
+pub trait GachaUrlFinder {
+    fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>>;
 }

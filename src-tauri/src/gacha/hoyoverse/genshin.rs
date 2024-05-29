@@ -1,53 +1,42 @@
 extern crate async_trait;
 extern crate reqwest;
 extern crate serde;
-extern crate url;
 
 use std::any::Any;
 use std::cmp::Ordering;
 use std::path::{Path, PathBuf};
 
-use super::utilities::{
-    fetch_gacha_records, lookup_cognosphere_dir, lookup_gacha_urls_from_endpoint,
-    lookup_mihoyo_dir, lookup_path_line_from_keyword, lookup_valid_cache_data_dir,
-};
-use super::{
-    GachaRecord, GachaRecordFetcherChannel, GachaUrl, GameDataDirectoryFinder,
-    MihoyoGachaRecordFetcher, MihoyoGachaUrlFinder,
-};
-
 use crate::error::Result;
+use crate::gacha::hoyoverse::utilities::lookup_mihoyo_dir;
+use crate::gacha::utilities::{
+    lookup_gacha_urls_from_endpoint, lookup_path_line_from_keyword, lookup_valid_cache_data_dir,
+};
+use crate::gacha::{GachaRecord, GachaUrl, GachaUrlFinder, GameDataDirectoryFinder};
 use async_trait::async_trait;
 use reqwest::Client as Reqwest;
 use serde::{Deserialize, Serialize};
 
+use super::hoyoverse::{GachaRecordFetcherChannel, HoyoverseGachaRecordFetcher};
+use super::utilities::fetch_gacha_records;
+
 #[derive(Default, Deserialize)]
-pub struct StarRailGacha;
+pub struct GenshinGacha;
 
 /// Game Directory
 
-impl GameDataDirectoryFinder for StarRailGacha {
+impl GameDataDirectoryFinder for GenshinGacha {
     fn find_game_data_directories(&self) -> Result<Vec<PathBuf>> {
-        let cognosphere_dir = lookup_cognosphere_dir();
         let mihoyo_dir = lookup_mihoyo_dir();
         let mut directories = Vec::new();
 
         // TODO: Untested
-        const INTERNATIONAL_PLAYER_LOG: &str = "Star Rail/Player.log";
-        const INTERNATIONAL_DIR_KEYWORD: &str = "/StarRail_Data/";
+        const INTERNATIONAL_OUTPUT_LOG: &str = "Genshin Impact/output_log.txt";
+        const INTERNATIONAL_DIR_KEYWORD: &str = "/GenshinImpact_Data/";
 
-        let mut player_log = cognosphere_dir.join(INTERNATIONAL_PLAYER_LOG);
+        let output_log = mihoyo_dir.join(INTERNATIONAL_OUTPUT_LOG);
         if let Some(directory) =
-            lookup_path_line_from_keyword(player_log, INTERNATIONAL_DIR_KEYWORD)?
+            lookup_path_line_from_keyword(&output_log, INTERNATIONAL_DIR_KEYWORD)?
         {
-            directories.push(directory);
-        }
-
-        const CHINESE_PLAYER_LOG: &str = "崩坏：星穹铁道/Player.log";
-        const CHINESE_DIR_KEYWORD: &str = "/StarRail_Data/";
-
-        player_log = mihoyo_dir.join(CHINESE_PLAYER_LOG);
-        if let Some(directory) = lookup_path_line_from_keyword(player_log, CHINESE_DIR_KEYWORD)? {
             directories.push(directory);
         }
 
@@ -57,9 +46,10 @@ impl GameDataDirectoryFinder for StarRailGacha {
 
 /// Gacha Url
 
-const ENDPOINT: &str = "/common/gacha_record/api/getGachaLog?";
+const ENDPOINT: &str = "/event/gacha_info/api/getGachaLog?";
+// const ENDPOINT: &str = "e20190909gacha-v2";
 
-impl MihoyoGachaUrlFinder for StarRailGacha {
+impl GachaUrlFinder for GenshinGacha {
     fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>> {
         // See: https://github.com/lgou2w/HoYo.Gacha/issues/10
         let cache_data_dir = lookup_valid_cache_data_dir(game_data_dir)?;
@@ -70,10 +60,9 @@ impl MihoyoGachaUrlFinder for StarRailGacha {
 /// Gacha Record
 
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
-pub struct StarRailGachaRecord {
+pub struct GenshinGachaRecord {
     pub id: String,
     pub uid: String,
-    pub gacha_id: String,
     pub gacha_type: String,
     pub item_id: String,
     pub count: String,
@@ -84,7 +73,7 @@ pub struct StarRailGachaRecord {
     pub rank_type: String,
 }
 
-impl GachaRecord for StarRailGachaRecord {
+impl GachaRecord for GenshinGachaRecord {
     fn id(&self) -> &str {
         &self.id
     }
@@ -94,7 +83,7 @@ impl GachaRecord for StarRailGachaRecord {
     }
 }
 
-impl PartialOrd for StarRailGachaRecord {
+impl PartialOrd for GenshinGachaRecord {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.id.partial_cmp(&other.id)
     }
@@ -104,18 +93,17 @@ impl PartialOrd for StarRailGachaRecord {
 
 #[allow(unused)]
 #[derive(Deserialize)]
-pub(crate) struct StarRailGachaRecordPagination {
+pub(crate) struct GenshinGachaRecordPagination {
     page: String,
     size: String,
-    // total: String,
-    list: Vec<StarRailGachaRecord>,
+    total: String,
+    list: Vec<GenshinGachaRecord>,
     region: String,
-    region_time_zone: i8,
 }
 
 #[async_trait]
-impl MihoyoGachaRecordFetcher for StarRailGacha {
-    type Target = StarRailGachaRecord;
+impl HoyoverseGachaRecordFetcher for GenshinGacha {
+    type Target = GenshinGachaRecord;
 
     async fn fetch_gacha_records(
         &self,
@@ -124,7 +112,7 @@ impl MihoyoGachaRecordFetcher for StarRailGacha {
         gacha_type: Option<&str>,
         end_id: Option<&str>,
     ) -> Result<Option<Vec<Self::Target>>> {
-        let response = fetch_gacha_records::<StarRailGachaRecordPagination>(
+        let response = fetch_gacha_records::<GenshinGachaRecordPagination>(
             reqwest, ENDPOINT, gacha_url, gacha_type, end_id,
         )
         .await?;
@@ -145,6 +133,6 @@ impl MihoyoGachaRecordFetcher for StarRailGacha {
 }
 
 #[async_trait]
-impl GachaRecordFetcherChannel<StarRailGachaRecord> for StarRailGacha {
+impl GachaRecordFetcherChannel<GenshinGachaRecord> for GenshinGacha {
     type Fetcher = Self;
 }

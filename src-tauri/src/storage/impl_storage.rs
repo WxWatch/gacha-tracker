@@ -25,7 +25,9 @@ use super::utilities::{
 };
 use crate::constants::DATABASE;
 use crate::error::{Error, Result};
-use crate::gacha::{GenshinGachaRecord, StarRailGachaRecord, WutheringWavesGachaRecord};
+use crate::gacha::hoyoverse::genshin::GenshinGachaRecord;
+use crate::gacha::hoyoverse::starrail::StarRailGachaRecord;
+use crate::gacha::kuro::wutheringwaves::WutheringWavesGachaRecord;
 use futures::TryStreamExt;
 use paste::paste;
 use sea_orm::sea_query::{Condition, Index, OnConflict};

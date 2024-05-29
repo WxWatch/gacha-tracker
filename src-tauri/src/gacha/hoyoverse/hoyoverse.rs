@@ -7,27 +7,16 @@ extern crate tokio;
 extern crate url;
 
 use crate::error::{Error, Result};
+use crate::gacha::GachaRecord;
 use async_trait::async_trait;
 use reqwest::Client as Reqwest;
-use serde::{Deserialize, Serialize};
-use std::any::Any;
+use serde::Serialize;
 use std::collections::BTreeMap;
 use std::future::Future;
-use std::path::{Path, PathBuf};
-use time::OffsetDateTime;
-
-use super::{GachaRecord, GachaUrl};
-
-/// Gacha Url Finder
-
-pub trait MihoyoGachaUrlFinder {
-    fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>>;
-}
 
 /// Gacha Record Fetcher
-
 #[async_trait]
-pub trait MihoyoGachaRecordFetcher {
+pub trait HoyoverseGachaRecordFetcher {
     type Target: GachaRecord;
 
     async fn fetch_gacha_records(
@@ -60,7 +49,7 @@ pub enum GachaRecordFetcherChannelFragment<T: GachaRecord + Sized + Serialize + 
 
 #[async_trait]
 pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + Sync> {
-    type Fetcher: MihoyoGachaRecordFetcher<Target = T> + Send + Sync;
+    type Fetcher: HoyoverseGachaRecordFetcher<Target = T> + Send + Sync;
 
     async fn pull_gacha_records(
         &self,
@@ -168,7 +157,7 @@ pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + 
     }
 }
 
-pub async fn create_mihoyo_fetcher_channel<Record, FetcherChannel, F, Fut>(
+pub async fn create_fetcher_channel<Record, FetcherChannel, F, Fut>(
     fetcher_channel: FetcherChannel,
     reqwest: Reqwest,
     fetcher: FetcherChannel::Fetcher,

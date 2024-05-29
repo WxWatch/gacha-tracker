@@ -7,6 +7,8 @@ extern crate tokio;
 extern crate url;
 
 use crate::error::{Error, Result};
+use crate::gacha::utilities::GachaResponse;
+use crate::gacha::GachaRecord;
 use async_trait::async_trait;
 use reqwest::Client as Reqwest;
 use serde::de::DeserializeOwned;
@@ -17,14 +19,6 @@ use std::future::Future;
 use std::path::{Path, PathBuf};
 use time::OffsetDateTime;
 use url::Url;
-
-use super::utilities::GachaResponse;
-use super::{GachaRecord, GachaUrl};
-
-/// Gacha Url Finder
-pub trait KuroGachaUrlFinder {
-    fn find_gacha_urls<P: AsRef<Path>>(&self, game_data_dir: P) -> Result<Vec<GachaUrl>>;
-}
 
 /// Gacha Record Fetcher
 #[async_trait]
@@ -260,7 +254,7 @@ pub(super) async fn fetch_kuro_gacha_records<T: Sized + DeserializeOwned>(
     data.insert("serverId", &server_id);
 
     let url = Url::parse(base_url).map_err(|_| Error::IllegalGachaUrl)?;
-    println!("Ze url {}", url);
+    println!("Ze url {}: {:?}", url, data);
     let response: GachaResponse<T> = reqwest.post(url).json(&data).send().await?.json().await?;
     let retcode = response.retcode.unwrap_or_default();
     if retcode != 0 {

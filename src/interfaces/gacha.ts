@@ -32,4 +32,5 @@ export interface StarRailGachaRecord {
 // See: src-tauri/src/gacha/impl_wutheringwaves.rs
 export interface WutheringWavesGachaRecord {
   id: string;
+  gacha_type: string;
 }

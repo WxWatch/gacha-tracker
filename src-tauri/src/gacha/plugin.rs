@@ -2,17 +2,21 @@ extern crate reqwest;
 extern crate tauri;
 extern crate time;
 
-use super::create_kuro_fetcher_channel;
+use super::hoyoverse::genshin::GenshinGacha;
+use super::hoyoverse::hoyoverse::create_fetcher_channel;
+use super::hoyoverse::hoyoverse::GachaRecordFetcherChannelFragment;
+use super::hoyoverse::starrail::StarRailGacha;
+use super::hoyoverse::utilities::find_hoyoverse_gacha_url_and_validate_consistency;
+use super::kuro::kuro::create_kuro_fetcher_channel;
+use super::kuro::kuro::KuroGachaRecordFetcherChannelFragment;
+use super::kuro::utilities::find_kuro_gacha_url_and_validate_consistency;
+use super::kuro::wutheringwaves::WutheringWavesGacha;
 use super::srgf;
 use super::uigf;
-use super::utilities::find_kuro_gacha_url_and_validate_consistency;
-use super::utilities::{create_default_reqwest, find_mihoyo_gacha_url_and_validate_consistency};
+use super::utilities::create_default_reqwest;
 use super::GachaUrl;
-use super::KuroGachaRecordFetcherChannelFragment;
-use super::{
-    create_mihoyo_fetcher_channel, GachaRecordFetcherChannelFragment, GameDataDirectoryFinder,
-    GenshinGacha, MihoyoGachaUrlFinder, StarRailGacha, WutheringWavesGacha,
-};
+use super::GachaUrlFinder;
+use super::GameDataDirectoryFinder;
 use crate::constants;
 use crate::error::{Error, Result};
 use crate::storage::entity_account::AccountFacet;
@@ -44,12 +48,17 @@ async fn find_gacha_url(
     let gacha_url: GachaUrl = match facet {
         AccountFacet::Genshin => {
             let gacha_urls = GenshinGacha.find_gacha_urls(game_data_dir)?;
-            find_mihoyo_gacha_url_and_validate_consistency(&GenshinGacha, &facet, &uid, &gacha_urls)
-                .await?
+            find_hoyoverse_gacha_url_and_validate_consistency(
+                &GenshinGacha,
+                &facet,
+                &uid,
+                &gacha_urls,
+            )
+            .await?
         }
         AccountFacet::StarRail => {
             let gacha_urls = StarRailGacha.find_gacha_urls(game_data_dir)?;
-            find_mihoyo_gacha_url_and_validate_consistency(
+            find_hoyoverse_gacha_url_and_validate_consistency(
                 &StarRailGacha,
                 &facet,
                 &uid,
@@ -91,7 +100,7 @@ async fn pull_all_gacha_records(
 
     match facet {
         AccountFacet::Genshin => {
-            create_mihoyo_fetcher_channel(
+            create_fetcher_channel(
                 GenshinGacha,
                 reqwest,
                 GenshinGacha,
@@ -110,7 +119,7 @@ async fn pull_all_gacha_records(
             .await?
         }
         AccountFacet::StarRail => {
-            create_mihoyo_fetcher_channel(
+            create_fetcher_channel(
                 StarRailGacha,
                 reqwest,
                 StarRailGacha,
