@@ -18,6 +18,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::future::Future;
 use std::path::{Path, PathBuf};
 use time::OffsetDateTime;
+use tracing::debug;
 use url::Url;
 
 /// Gacha Record Fetcher
@@ -63,7 +64,6 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         sender: &tokio::sync::mpsc::Sender<KuroGachaRecordFetcherChannelFragment<T>>,
         gacha_url: &str,
         gacha_type: &str,
-        last_end_id: Option<&str>,
     ) -> Result<()> {
         const SLEEPING: u64 = 3;
 
@@ -75,63 +75,15 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
             .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
         tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
 
-        let mut end_id = String::from("0");
-        let mut pagination: u32 = 1;
+        let gacha_records = fetcher
+            .fetch_gacha_records(reqwest, gacha_url, Some(gacha_type))
+            .await?;
 
-        loop {
-            if pagination % 5 == 0 {
-                sender
-                    .send(KuroGachaRecordFetcherChannelFragment::Sleeping)
-                    .await
-                    .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-                tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
-            }
-
+        if let Some(gacha_records) = gacha_records {
             sender
-                .send(KuroGachaRecordFetcherChannelFragment::Pagination(
-                    pagination,
-                ))
+                .send(KuroGachaRecordFetcherChannelFragment::Data(gacha_records))
                 .await
                 .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-            let gacha_records = fetcher
-                .fetch_gacha_records(reqwest, gacha_url, Some(gacha_type))
-                .await?;
-            pagination += 1;
-
-            if let Some(gacha_records) = gacha_records {
-                if !gacha_records.is_empty() {
-                    end_id = gacha_records.last().unwrap().id().to_owned();
-
-                    let mut should_break = false;
-                    let data = if let Some(last) = last_end_id {
-                        let mut tmp = Vec::with_capacity(gacha_records.len());
-                        for record in gacha_records {
-                            if last.cmp(record.id()).is_lt() {
-                                tmp.push(record);
-                            } else {
-                                should_break = true;
-                            }
-                        }
-                        tmp
-                    } else {
-                        gacha_records
-                    };
-
-                    sender
-                        .send(KuroGachaRecordFetcherChannelFragment::Data(data))
-                        .await
-                        .map_err(|_| Error::GachaRecordFetcherChannelSend)?;
-
-                    if should_break {
-                        break;
-                    } else {
-                        tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
-                        continue;
-                    }
-                }
-            }
-
-            break;
         }
 
         sender
@@ -150,15 +102,8 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         gacha_type_and_last_end_id_mappings: &BTreeMap<String, Option<String>>,
     ) -> Result<()> {
         for (gacha_type, last_end_id) in gacha_type_and_last_end_id_mappings {
-            self.pull_gacha_records(
-                reqwest,
-                fetcher,
-                sender,
-                gacha_url,
-                gacha_type,
-                last_end_id.as_deref(),
-            )
-            .await?;
+            self.pull_gacha_records(reqwest, fetcher, sender, gacha_url, gacha_type)
+                .await?;
         }
         Ok(())
     }
@@ -254,7 +199,7 @@ pub(super) async fn fetch_kuro_gacha_records<T: Sized + DeserializeOwned>(
     data.insert("serverId", &server_id);
 
     let url = Url::parse(base_url).map_err(|_| Error::IllegalGachaUrl)?;
-    println!("Ze url {}: {:?}", url, data);
+    debug!("Fetch URL {}: {:?}", url, data);
     let response: GachaResponse<T> = reqwest.post(url).json(&data).send().await?.json().await?;
     let retcode = response.retcode.unwrap_or_default();
     if retcode != 0 {

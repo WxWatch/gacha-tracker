@@ -86,26 +86,33 @@ impl Storage {
 
         {
             debug!("Creating tables...");
-            let statement1 = create_table_statement(GenshinGachaRecordEntity);
-            let statement2 = create_table_statement(StarRailGachaRecordEntity);
-            let statement3 = create_table_statement(AccountEntity);
-            let statement4 = create_table_statement(WutheringWavesGachaRecordEntity);
+            let create_genshin_table_statement = create_table_statement(GenshinGachaRecordEntity);
+            let create_star_rail_table_statement =
+                create_table_statement(StarRailGachaRecordEntity);
+            let create_wuthering_waves_table_statement =
+                create_table_statement(WutheringWavesGachaRecordEntity);
+            let create_account_statement = create_table_statement(AccountEntity);
             execute_statements(
                 &self.database,
-                &[statement1, statement2, statement3, statement4],
+                &[
+                    create_genshin_table_statement,
+                    create_star_rail_table_statement,
+                    create_wuthering_waves_table_statement,
+                    create_account_statement,
+                ],
             )
             .await?;
         }
 
         {
             debug!("Creating indexes...");
-            let statement1 = create_index_statements(GenshinGachaRecordEntity);
-            let statement2 = create_index_statements(StarRailGachaRecordEntity);
-            let statement3 = create_index_statements(AccountEntity);
-            let statement5 = create_index_statements(WutheringWavesGachaRecordEntity);
+            let genshin_index = create_index_statements(GenshinGachaRecordEntity);
+            let star_rail_index = create_index_statements(StarRailGachaRecordEntity);
+            let wuthering_waves_index = create_index_statements(WutheringWavesGachaRecordEntity);
+            let account_index = create_index_statements(AccountEntity);
 
             // Account: facet + uid constraint
-            let statement4 = Index::create()
+            let account_facet_index = Index::create()
                 .name(&format!(
                     "idx-{}-{}-{}",
                     AccountEntity.to_string(),
@@ -119,11 +126,11 @@ impl Storage {
                 .if_not_exists()
                 .to_owned();
 
-            let mut statements = statement1;
-            statements.extend(statement2);
-            statements.extend(statement3);
-            statements.extend(statement5);
-            statements.push(statement4);
+            let mut statements = genshin_index;
+            statements.extend(star_rail_index);
+            statements.extend(wuthering_waves_index);
+            statements.extend(account_index);
+            statements.push(account_facet_index);
             execute_statements(&self.database, &statements).await?;
         }
 

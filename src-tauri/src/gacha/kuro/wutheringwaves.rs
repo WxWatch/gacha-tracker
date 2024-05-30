@@ -70,10 +70,14 @@ pub struct WutheringWavesGachaRecord {
     pub id: Option<String>,
     pub uid: Option<String>,
     pub gacha_type: Option<String>,
-    pub cardPoolType: String,
-    pub resourceId: i32,
-    pub qualityLevel: i32,
-    pub resourceType: String,
+    #[serde(rename = "cardPoolType")]
+    pub card_pool_type: String,
+    #[serde(rename = "resourceId")]
+    pub resource_id: i32,
+    #[serde(rename = "qualityLevel")]
+    pub quality_level: i32,
+    #[serde(rename = "resourceType")]
+    pub resource_type: String,
     pub name: String,
     pub count: i32,
     pub time: String,
