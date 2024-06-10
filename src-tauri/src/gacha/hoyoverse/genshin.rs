@@ -46,7 +46,7 @@ impl GameDataDirectoryFinder for GenshinGacha {
 
 /// Gacha Url
 
-const ENDPOINT: &str = "/event/gacha_info/api/getGachaLog?";
+const ENDPOINT: &str = "/api/getGachaLog?";
 // const ENDPOINT: &str = "e20190909gacha-v2";
 
 impl GachaUrlFinder for GenshinGacha {

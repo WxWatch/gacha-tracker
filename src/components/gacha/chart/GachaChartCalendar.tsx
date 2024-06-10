@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import dayjs from "@/utilities/dayjs";
+import { getRankType } from "@/interfaces/gacha";
 
 export default function GachaChartCalendar() {
   const {
@@ -20,9 +21,9 @@ export default function GachaChartCalendar() {
     aggregatedValues.values.reduce((acc, cur) => {
       const key = dayjs(cur.time).format("YYYY-MM-DD");
       if (!acc[key]) {
-        acc[key] = +cur.rank_type;
+        acc[key] = +getRankType(facet, cur);
       } else {
-        acc[key] = Math.max(acc[key], +cur.rank_type);
+        acc[key] = Math.max(acc[key], +getRankType(facet, cur));
       }
       return acc;
     }, {} as Record<string, number>)
@@ -87,7 +88,7 @@ export default function GachaChartCalendar() {
           monthLegendOffset={12}
           theme={{
             fontFamily: "inherit",
-            fontSize: 14,
+            // fontSize: 14,
             tooltip: {
               // See: https://github.com/plouc/nivo/blob/0f0a926627c370f4ae0ca435a91573a16d96affc/packages/tooltip/src/TooltipWrapper.tsx#L79-L83
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment

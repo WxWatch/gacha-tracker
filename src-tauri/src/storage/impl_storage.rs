@@ -321,7 +321,7 @@ macro_rules! impl_gacha_records_curd {
               gacha_type: Option<&str>,
               limit: Option<u64>
             ) -> Result<Vec<$record>> {
-              debug!("Find {} gacha records by uid: {uid}", stringify!($name));
+              debug!("Find {} gacha records by uid: {uid} {:?}", stringify!($name), gacha_type);
 
               let result = if let Some(gacha_type) = gacha_type {
                 $entity::find()

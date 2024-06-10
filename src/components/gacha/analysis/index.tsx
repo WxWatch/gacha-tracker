@@ -13,7 +13,7 @@ import GachaAnalysisNamedRecords from "./GachaAnalysisNamedRecords";
 export default function GachaAnalysis() {
   const { gachaRecords } = useGachaLayoutContext();
   const {
-    namedValues: { character, weapon, permanent, newbie },
+    namedValues: { character, weapon, permanent, beginner },
   } = gachaRecords;
   const [value, setValue] = React.useState("1");
 
@@ -30,7 +30,7 @@ export default function GachaAnalysis() {
             <Tab label={character.categoryTitle} value="2" />
             <Tab label={weapon.categoryTitle} value="3" />
             <Tab label={permanent.categoryTitle} value="4" />
-            <Tab label={newbie.categoryTitle} value="5" />
+            <Tab label={beginner.categoryTitle} value="5" />
           </TabList>
         </Box>
         <TabPanel value="1">
@@ -49,7 +49,7 @@ export default function GachaAnalysis() {
           <GachaAnalysisNamedRecords values={permanent} />
         </TabPanel>
         <TabPanel value="5">
-          <GachaAnalysisNamedRecords values={newbie} />
+          <GachaAnalysisNamedRecords values={beginner} />
         </TabPanel>
       </TabContext>
     </Box>

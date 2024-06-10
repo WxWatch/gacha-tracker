@@ -3,17 +3,12 @@ import Stack from "@mui/material/Stack";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { SidebarWidth } from "@/components/Sidebar";
 
-export interface LayoutProps {
-  title?: React.ReactNode;
-  navbar?: React.ReactNode;
-}
+export interface LayoutProps {}
 
 export default function Layout(props: React.PropsWithChildren<LayoutProps>) {
   return (
     <React.Fragment>
-      <Navbar title={props.title}>{props.navbar}</Navbar>
       <Stack direction="column" spacing={2} padding={2}>
         {props.children}
       </Stack>
@@ -32,7 +27,6 @@ function Navbar(props: React.PropsWithChildren<{ title?: React.ReactNode }>) {
         sx={{
           borderBottom: 1,
           borderColor: (theme) => theme.palette.divider,
-          paddingLeft: SidebarWidth,
         }}
       >
         <Toolbar

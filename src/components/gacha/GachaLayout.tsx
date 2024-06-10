@@ -9,9 +9,15 @@ import GachaAnalysis from "@/components/gacha/analysis";
 import GachaChart from "@/components/gacha/chart";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
+import { AccountFacet } from "@/interfaces/account";
 
-export default function GachaLayout() {
-  const { facet, accounts, selectedAccountUid } = useStatefulAccountContext();
+type GachaLayoutProps = {
+  facet: AccountFacet;
+};
+
+export default function GachaLayout(props: GachaLayoutProps) {
+  const { facet } = props;
+  const { accounts, selectedAccountUid } = useStatefulAccountContext();
   const {
     data: gachaRecords,
     isLoading,
@@ -19,7 +25,6 @@ export default function GachaLayout() {
     error,
   } = useGachaRecordsQuery(facet, selectedAccountUid);
 
-  console.log("gacha records", gachaRecords);
   // Layout state
   const [{ tab, alert }, produceState] = useImmer({
     tab: 0,

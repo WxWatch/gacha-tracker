@@ -14,8 +14,8 @@ export default withStatefulAccount(
   AccountFacet.WutheringWaves,
   function WutheringWaves() {
     return (
-      <Layout title="Convene · Wuthering Waves" navbar={<AccountMenu />}>
-        <GachaLayout />
+      <Layout>
+        <GachaLayout facet={AccountFacet.WutheringWaves} />
       </Layout>
     );
   }

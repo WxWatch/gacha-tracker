@@ -107,6 +107,7 @@ impl KuroGachaRecordFetcher for WutheringWavesGacha {
     async fn fetch_gacha_records(
         &self,
         reqwest: &Reqwest,
+        uid: &str,
         gacha_url: &str,
         gacha_type: Option<&str>,
     ) -> Result<Option<Vec<Self::Target>>> {
@@ -122,25 +123,12 @@ impl KuroGachaRecordFetcher for WutheringWavesGacha {
             .map(|record| {
                 let mut record = record.clone();
                 record.id = Some(String::from("1"));
-                record.uid = Some(String::from("1"));
+                record.uid = Some(String::from(uid));
                 record.gacha_type = gacha_type.map(str::to_string);
                 record
             })
             .collect();
         Ok(Some(updata))
-    }
-
-    async fn fetch_gacha_records_any_uid(
-        &self,
-        reqwest: &Reqwest,
-        gacha_url: &str,
-    ) -> Result<Option<String>> {
-        let result = self.fetch_gacha_records(reqwest, gacha_url, None).await?;
-        Ok(result.and_then(|gacha_records| {
-            gacha_records
-                .first()
-                .map(|record| record.uid.as_ref().unwrap().clone())
-        }))
     }
 }
 

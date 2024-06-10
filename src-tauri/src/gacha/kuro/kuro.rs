@@ -29,15 +29,10 @@ pub trait KuroGachaRecordFetcher {
     async fn fetch_gacha_records(
         &self,
         reqwest: &Reqwest,
+        uid: &str,
         gacha_url: &str,
         gacha_type: Option<&str>,
     ) -> Result<Option<Vec<Self::Target>>>;
-
-    async fn fetch_gacha_records_any_uid(
-        &self,
-        reqwest: &Reqwest,
-        gacha_url: &str,
-    ) -> Result<Option<String>>;
 }
 
 /// Gacha Record Fetcher Channel
@@ -62,6 +57,7 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         reqwest: &Reqwest,
         fetcher: &Self::Fetcher,
         sender: &tokio::sync::mpsc::Sender<KuroGachaRecordFetcherChannelFragment<T>>,
+        uid: &str,
         gacha_url: &str,
         gacha_type: &str,
     ) -> Result<()> {
@@ -76,7 +72,7 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
 
         let gacha_records = fetcher
-            .fetch_gacha_records(reqwest, gacha_url, Some(gacha_type))
+            .fetch_gacha_records(reqwest, uid, gacha_url, Some(gacha_type))
             .await?;
 
         if let Some(gacha_records) = gacha_records {
@@ -98,11 +94,12 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         reqwest: &Reqwest,
         fetcher: &Self::Fetcher,
         sender: &tokio::sync::mpsc::Sender<KuroGachaRecordFetcherChannelFragment<T>>,
+        uid: &str,
         gacha_url: &str,
         gacha_type_and_last_end_id_mappings: &BTreeMap<String, Option<String>>,
     ) -> Result<()> {
         for (gacha_type, last_end_id) in gacha_type_and_last_end_id_mappings {
-            self.pull_gacha_records(reqwest, fetcher, sender, gacha_url, gacha_type)
+            self.pull_gacha_records(reqwest, fetcher, sender, uid, gacha_url, gacha_type)
                 .await?;
         }
         Ok(())
@@ -113,6 +110,7 @@ pub async fn create_kuro_fetcher_channel<Record, FetcherChannel, F, Fut>(
     fetcher_channel: FetcherChannel,
     reqwest: Reqwest,
     fetcher: FetcherChannel::Fetcher,
+    uid: String,
     gacha_url: String,
     gacha_type_and_last_end_id_mappings: BTreeMap<String, Option<String>>,
     receiver_fn: F,
@@ -133,6 +131,7 @@ where
                 &reqwest,
                 &fetcher,
                 &sender,
+                &uid,
                 &gacha_url,
                 &gacha_type_and_last_end_id_mappings,
             )

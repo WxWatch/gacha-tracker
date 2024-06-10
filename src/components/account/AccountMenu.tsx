@@ -16,7 +16,7 @@ export default function AccountMenu() {
   const selectedAccount = selectedAccountUid
     ? accounts[selectedAccountUid]
     : null;
-  const displayName = resolveAccountDisplayName(facet, selectedAccount);
+  const displayName = resolveAccountDisplayName(selectedAccount);
   const [{ drawer, dialog }, produceState] = useImmer({
     drawer: false,
     dialog: {

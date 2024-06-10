@@ -11,8 +11,9 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import MenuItem from "@mui/material/MenuItem";
 
-export default function GachaActionImport() {
+export default function GachaMenuItemImport() {
   const { facet, selectedAccount, alert } = useGachaLayoutContext();
   const { action } = resolveCurrency(facet);
   const [busy, setBusy] = React.useState(false);
@@ -55,18 +56,14 @@ export default function GachaActionImport() {
   }, [selectedAccount, alert, action, setBusy]);
 
   return (
-    <Box>
-      <Tooltip placement="bottom" title="Import" arrow>
-        <IconButton
-          onClick={handleImportGachaRecords}
-          disabled={busy}
-          sx={{
-            bgcolor: (theme) => theme.palette.action.hover,
-          }}
-        >
-          <FileUploadIcon />
-        </IconButton>
-      </Tooltip>
+    <MenuItem
+      key="GachaActionImport"
+      onClick={handleImportGachaRecords}
+      disabled={busy}
+    >
+      <FileUploadIcon />
+      <span>&nbsp;Import</span>
+
       <Backdrop
         open={busy}
         sx={{
@@ -82,6 +79,6 @@ export default function GachaActionImport() {
           </Typography>
         </Box>
       </Backdrop>
-    </Box>
+    </MenuItem>
   );
 }

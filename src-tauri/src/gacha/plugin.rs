@@ -142,6 +142,7 @@ async fn pull_all_gacha_records(
                 WutheringWavesGacha,
                 reqwest,
                 WutheringWavesGacha,
+                uid,
                 gacha_url,
                 gacha_type_and_last_end_id_mappings,
                 |fragment| async {
