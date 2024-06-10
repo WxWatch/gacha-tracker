@@ -4,6 +4,7 @@ import { enUS } from "@mui/material/locale";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import "@/assets/global.css";
+import { fontFamily, fontSize, palette } from "@mui/system";
 
 const baseTheme = {
   typography: {
