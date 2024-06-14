@@ -4,7 +4,6 @@ import { enUS } from "@mui/material/locale";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import "@/assets/global.css";
-import { fontFamily, fontSize, palette } from "@mui/system";
 
 const baseTheme = {
   typography: {
@@ -26,17 +25,17 @@ export default function Theme(props: React.PropsWithChildren) {
   );
 }
 
-const genshinTheme = createTheme(
-  {
-    ...baseTheme,
-    palette: {
-      primary: {
-        main: "#eddbbb", // Paimon Gold
-      },
-      secondary: {
-        main: "#011138", // Paimon Blue
-      },
-    },
-  },
-  enUS
-);
+// const genshinTheme = createTheme(
+//   {
+//     ...baseTheme,
+//     palette: {
+//       primary: {
+//         main: "#eddbbb", // Paimon Gold
+//       },
+//       secondary: {
+//         main: "#011138", // Paimon Blue
+//       },
+//     },
+//   },
+//   enUS
+// );

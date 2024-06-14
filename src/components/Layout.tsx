@@ -15,36 +15,3 @@ export default function Layout(props: React.PropsWithChildren<LayoutProps>) {
     </React.Fragment>
   );
 }
-
-function Navbar(props: React.PropsWithChildren<{ title?: React.ReactNode }>) {
-  return (
-    <React.Fragment>
-      <AppBar
-        component="nav"
-        position="fixed"
-        color="inherit"
-        elevation={0}
-        sx={{
-          borderBottom: 1,
-          borderColor: (theme) => theme.palette.divider,
-        }}
-      >
-        <Toolbar
-          component={Stack}
-          direction="row"
-          maxHeight={64}
-          padding={2}
-          disableGutters
-        >
-          {props.title && (
-            <Typography component="h2" variant="h6" flexGrow={1} noWrap>
-              {props.title}
-            </Typography>
-          )}
-          {props.children}
-        </Toolbar>
-      </AppBar>
-      <Toolbar disableGutters />
-    </React.Fragment>
-  );
-}

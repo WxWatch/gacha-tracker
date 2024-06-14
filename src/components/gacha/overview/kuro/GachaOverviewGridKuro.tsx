@@ -4,7 +4,6 @@ import { useGachaLayoutContext } from "@/components/gacha/GachaLayoutContext";
 import { SxProps, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
@@ -132,81 +131,6 @@ function GachaOverviewLast({
   );
 }
 
-function GachaOverviewGridCard({
-  facet,
-  value,
-  newbie,
-}: {
-  facet: AccountFacet;
-  value: NamedKuroRecords | KuroRecords["aggregatedValues"];
-  newbie?: NamedKuroRecords;
-}) {
-  const {
-    total,
-    metadata: { golden, purple },
-  } = value;
-  const { action } = resolveCurrency(facet);
-  const category = "category" in value ? value.category : "aggregated";
-  const categoryTitle =
-    "categoryTitle" in value ? value.categoryTitle : "Total";
-
-  const newbieGolden = newbie && newbie.metadata.golden.values[0];
-  const newbieGoldenName = newbieGolden && `${newbieGolden.name}`;
-
-  if (total === 0) {
-    return (
-      <Card sx={GachaOverviewGridCardSx}>
-        <Box className="category">
-          <Typography component="div" variant="body2">
-            {categoryTitle}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography>No data available</Typography>
-        </Box>
-      </Card>
-    );
-  }
-
-  return (
-    <Card sx={GachaOverviewGridCardSx}>
-      <CardHeader
-        title={categoryTitle}
-        subheader={
-          <Stack direction="row" gap={1}>
-            <Chip
-              label={`Lifetime ${action.plural}: ${total}`}
-              color="primary"
-            />
-            {category !== "aggregated" ? (
-              <Chip label={`5★ Pity: ${golden.nextPity}`} color="warning" />
-            ) : (
-              newbieGoldenName && (
-                <Chip
-                  label={`Novice 5★: ${newbieGoldenName}`}
-                  color="warning"
-                />
-              )
-            )}
-            <Chip label={`4★ Pity: ${purple.nextPity}`} color="secondary" />
-          </Stack>
-        }
-      ></CardHeader>
-      <CardContent>
-        <Stack direction="row" justifyContent="space-around" sx={{ gap: 2 }}>
-          {golden.values.length === 0 || (
-            <GachaOverviewLast facet={facet} metadata={golden} />
-          )}
-
-          {purple.values.length === 0 || (
-            <GachaOverviewLast facet={facet} metadata={purple} />
-          )}
-        </Stack>
-      </CardContent>
-    </Card>
-  );
-}
-
 const GachaOverviewGridCardSx: SxProps<Theme> = {
   gap: 2,
   position: "relative",
@@ -327,41 +251,6 @@ function GachaOverviewCard({
         </Box>
       )}
     </Box>
-    // <Card>
-    //   <CardHeader
-    //     title={categoryTitle}
-    //     subheader={
-    //       <Stack direction="row" gap={1}>
-    //         <Chip
-    //           label={`Lifetime ${action.plural}: ${total}`}
-    //           color="primary"
-    //         />
-    //         {category !== "aggregated" ? (
-    //           <Chip label={`5★ Pity: ${golden.nextPity}`} color="warning" />
-    //         ) : (
-    //           newbieGoldenName && (
-    //             <Chip
-    //               label={`Novice 5★: ${newbieGoldenName}`}
-    //               color="warning"
-    //             />
-    //           )
-    //         )}
-    //         <Chip label={`4★ Pity: ${purple.nextPity}`} color="secondary" />
-    //       </Stack>
-    //     }
-    //   ></CardHeader>
-    //   <CardContent>
-    //     <Stack direction="row" justifyContent="space-around" sx={{ gap: 2 }}>
-    //       {golden.values.length === 0 || (
-    //         <GachaOverviewLast facet={facet} metadata={golden} />
-    //       )}
-
-    //       {purple.values.length === 0 || (
-    //         <GachaOverviewLast facet={facet} metadata={purple} />
-    //       )}
-    //     </Stack>
-    //   </CardContent>
-    // </Card>
   );
 }
 

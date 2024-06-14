@@ -101,7 +101,7 @@ const kuroRecordsQueryFn: FetchQueryOptions<KuroRecords | null>["queryFn"] =
     const rawKuroRecords: KuroRecord[] = (await PluginStorage.findGachaRecords(
       facet,
       { uid }
-    )) as unknown as KuroRecord[]; //TODO: fix this
+    )) as unknown as KuroRecord[]; // TODO: fix this
     return computeKuroRecords(facet, uid, rawKuroRecords);
   };
 

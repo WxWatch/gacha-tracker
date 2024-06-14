@@ -18,12 +18,12 @@ const extensions = {
   },
 } as const;
 
-//TODO: this needs to be by ID ONLY
+// TODO: this needs to be by ID ONLY
 export function lookupAssetIcon(
   facet: AccountFacet,
   category: "character" | "weapon",
   id: string
 ): string | undefined {
-  const path = `/src/assets/images/${extensions[facet]["gameName"]}/${category}/${id}${extensions[facet][category]}`;
+  const path = `/src/assets/images/${extensions[facet].gameName}/${category}/${id}${extensions[facet][category]}`;
   return path;
 }

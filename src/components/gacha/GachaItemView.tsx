@@ -56,7 +56,7 @@ export function GachaItemViewInternal(props: GachaItemViewProps) {
   } = props;
 
   const category = isWeapon ? "weapon" : "character";
-  let iconSrc = lookupAssetIcon(facet, category, id);
+  const iconSrc = lookupAssetIcon(facet, category, id);
 
   if (!iconSrc) {
     // TODO: default character and/or weapon iconSrc
@@ -149,7 +149,7 @@ const GachaItemViewSx: SxProps<Theme> = {
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     borderRadius: 2,
-    objectFit: "cover", //or use scale-down
+    objectFit: "cover", // or use scale-down
   },
   '&[data-facet="genshin"]': {
     '&[data-rank="3"] > img': {
