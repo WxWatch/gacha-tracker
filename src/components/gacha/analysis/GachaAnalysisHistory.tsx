@@ -40,7 +40,7 @@ function rankMetadataForRecords(rank: number, records: NamedGachaRecords) {
 function GachaAnalysisHistory({ rank }: { rank: number }) {
   const { facet, gachaRecords } = useGachaLayoutContext();
   const {
-    namedValues: { character, weapon, permanent, newbie },
+    namedValues: { character, weapon, permanent, beginner },
   } = gachaRecords;
 
   return (
@@ -67,12 +67,12 @@ function GachaAnalysisHistory({ rank }: { rank: number }) {
           categoryTitle={permanent.categoryTitle}
           records={rankMetadataForRecords(rank, permanent)}
         />
-        {rankMetadataForRecords(rank, newbie).sum > 0 && (
+        {rankMetadataForRecords(rank, beginner).sum > 0 && (
           <GachaAnalysisHistoryList
             facet={facet}
             rank={rank}
-            categoryTitle={newbie.categoryTitle}
-            records={rankMetadataForRecords(rank, newbie)}
+            categoryTitle={beginner.categoryTitle}
+            records={rankMetadataForRecords(rank, beginner)}
           />
         )}
       </Stack>
@@ -110,13 +110,10 @@ function GachaAnalysisHistoryList({
             <GachaItemView
               facet={facet}
               key={item.id}
-              name={item.name}
-              id={item.item_id || item.name}
-              isWeapon={item.item_type === "Light Cone"}
-              rank={item.rank_type}
+              item={item}
               size={GachaAnalysisHistoryItemViewSize}
-              usedPity={item.usedPity}
-              restricted={item.restricted}
+              // usedPity={item.usedPity}
+              // restricted={item.restricted}
             />
           ))
         )}
@@ -125,7 +122,7 @@ function GachaAnalysisHistoryList({
   );
 }
 
-const GachaAnalysisHistoryItemViewSize = 84;
+const GachaAnalysisHistoryItemViewSize = 100;
 const GachaAnalysisHistoryListCls = "gacha-analysis-history-list";
 const GachaAnalysisHistoryListSx: SxProps<Theme> = {
   flexDirection: "row",

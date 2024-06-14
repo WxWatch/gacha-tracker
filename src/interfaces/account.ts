@@ -5,6 +5,7 @@
 export enum AccountFacet {
   Genshin = "genshin",
   StarRail = "starrail",
+  WutheringWaves = "wutheringwaves",
 }
 
 export interface KnownAccountProperties {
@@ -23,26 +24,22 @@ export interface Account {
   properties: KnownAccountProperties | null;
 }
 
-export function resolveAccountDisplayName(
-  facet: AccountFacet,
-  account: Account | null
-): string {
-  if (account && account.facet !== facet) {
-    // HACK: strict check
-    throw new Error(
-      `Account facet mismatch: ${account.facet} (Expected: ${facet})`
-    );
+export function resolveAccountDisplayName(account: Account | null): string {
+  return account?.properties?.displayName || defaultAccountName(account?.facet);
+}
+
+function defaultAccountName(facet: AccountFacet | undefined): string {
+  // TODO: Default display name i18n
+  switch (facet) {
+    case AccountFacet.Genshin:
+      return "Traveler";
+    case AccountFacet.StarRail:
+      return "Trailblazer";
+    case AccountFacet.WutheringWaves:
+      return "Rover";
   }
 
-  // TODO: Default display name i18n
-  return (
-    account?.properties?.displayName ||
-    (facet === AccountFacet.Genshin
-      ? "Traveler"
-      : facet === AccountFacet.StarRail
-      ? "Trailblazer"
-      : "NULL")
-  );
+  return "NULL";
 }
 
 export interface Action {
@@ -66,6 +63,25 @@ export function resolveCurrency(facet: AccountFacet): {
         currency: "Stellar Jade",
         action: { singular: "Warp", plural: "Warps" },
       };
+    case AccountFacet.WutheringWaves:
+      return {
+        currency: "Astrite",
+        action: { singular: "Convene", plural: "Convenes" },
+      };
+    default:
+      throw new Error(`Unknown account facet: ${facet}`);
+  }
+}
+
+// TODO: i18n
+export function resolveFacetName(facet: AccountFacet): string {
+  switch (facet) {
+    case AccountFacet.Genshin:
+      return "Genshin Impact";
+    case AccountFacet.StarRail:
+      return "Honkai: Star Rail";
+    case AccountFacet.WutheringWaves:
+      return "Wuthering Waves";
     default:
       throw new Error(`Unknown account facet: ${facet}`);
   }

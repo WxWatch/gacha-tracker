@@ -9,9 +9,15 @@ import GachaAnalysis from "@/components/gacha/analysis";
 import GachaChart from "@/components/gacha/chart";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
+import { AccountFacet } from "@/interfaces/account";
 
-export default function GachaLayout() {
-  const { facet, accounts, selectedAccountUid } = useStatefulAccountContext();
+type GachaLayoutProps = {
+  facet: AccountFacet;
+};
+
+export default function GachaLayout(props: GachaLayoutProps) {
+  const { facet } = props;
+  const { accounts, selectedAccountUid } = useStatefulAccountContext();
   const {
     data: gachaRecords,
     isLoading,
@@ -108,7 +114,7 @@ export default function GachaLayout() {
       <GachaToolbar
         facet={facet}
         ActionTabsProps={{
-          tabs: ["Overview", "Analysis", "Stats", "Catalog"],
+          tabs: ["Overview", "Analysis", "Stats"],
           value: tab,
           onChange: (_, newValue) =>
             produceState((draft) => {
@@ -121,7 +127,6 @@ export default function GachaLayout() {
           0: <GachaOverview />,
           1: <GachaAnalysis />,
           2: <GachaChart />,
-          3: <iframe src="https://wiki.hoyolab.com/pc/hsr/home" />,
         }[tab]
       }
     </GachaLayoutContext.Provider>

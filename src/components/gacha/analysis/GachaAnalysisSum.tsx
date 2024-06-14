@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 export default function GachaAnalysisSum() {
   const { gachaRecords } = useGachaLayoutContext();
   const {
-    namedValues: { character, weapon, permanent, newbie },
+    namedValues: { character, weapon, permanent, beginner },
     aggregatedValues,
   } = gachaRecords;
 
@@ -36,8 +36,8 @@ export default function GachaAnalysisSum() {
           values={computeNamedGachaRecordsValues(permanent)}
         />
         <GachaAnalysisSumCol
-          title={newbie.categoryTitle}
-          values={computeNamedGachaRecordsValues(newbie)}
+          title={beginner.categoryTitle}
+          values={computeNamedGachaRecordsValues(beginner)}
         />
         <GachaAnalysisSumCol
           title="Total"
@@ -97,7 +97,7 @@ const GachaAnalysisSumSx: SxProps<Theme> = {
   [`& .${GachaAnalysisSumCls}-col`]: {
     width: 140,
     flexGrow: 1,
-    fontSize: "1rem",
+    // fontSize: "1rem",
     border: 2,
     borderBottom: 0,
     borderColor: "grey.300",

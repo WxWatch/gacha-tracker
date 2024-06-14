@@ -1,64 +1,41 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import { styled, alpha } from "@mui/material/styles";
-import { OverridableComponent } from "@mui/material/OverridableComponent";
-import Drawer from "@mui/material/Drawer";
-import Toolbar from "@mui/material/Toolbar";
-import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
+import * as React from "react";
+import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Button, { ButtonTypeMap } from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import MuiDrawer from "@mui/material/Drawer";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import List from "@mui/material/List";
+import CssBaseline from "@mui/material/CssBaseline";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import SettingsIcon from "@mui/icons-material/Settings";
-import LogoSrc from "@/assets/images/Logo.webp";
 import StarRailLogoSrc from "@/assets/images/starrail/starrail-icon.jpeg";
 import GenshinLogoSrc from "@/assets/images/genshin/genshin-icon.jpeg";
-import PaimonTreasureSrc from "@/assets/images/Paimon.png";
+import WutheringWavesLogoSrc from "@/assets/images/wutheringwaves/wutheringwaves-logo.png";
+import Tooltip from "@mui/material/Tooltip";
+import { Link, useLocation } from "react-router-dom";
+import { HomeOutlined } from "@mui/icons-material";
 
-export const SidebarWidth = "96px";
+const drawerWidth = 240;
 
-const GameIcon = styled((props: { src: string }) => {
-  const { src } = props;
-  return (
-    <Box {...props}>
-      <img src={src} alt="logo" />
-    </Box>
-  );
-})(() => ({
-  "& img": {
+const GameIcon = styled("img")(() => ({
+  "&": {
     borderRadius: "8px",
-    maxWidth: 64,
-    maxHeight: 64,
+    maxWidth: 48,
+    maxHeight: 55,
   },
 }));
-
-export default function Sidebar() {
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: SidebarWidth,
-        flexShrink: 0,
-        bgcolor: "#efefef",
-        "& .MuiDrawer-paper": {
-          width: SidebarWidth,
-          boxSizing: "border-box",
-        },
-      }}
-    >
-      <Toolbar disableGutters>
-        <Logo />
-      </Toolbar>
-      <Divider />
-      <NavList />
-    </Drawer>
-  );
-}
 
 type Nav = { title: string; href: string; icon?: React.ReactNode };
 
 const Navs: Nav[] = [
-  { title: "Home", href: "/", icon: <GameIcon src={PaimonTreasureSrc} /> },
+  { title: "Home", href: "/", icon: <HomeOutlined fontSize="large" /> },
   {
     title: "Genshin Impact",
     href: "/genshin",
@@ -69,85 +46,144 @@ const Navs: Nav[] = [
     href: "/starrail",
     icon: <GameIcon src={StarRailLogoSrc} />,
   },
+  {
+    title: "Wuthering Waves",
+    href: "/wutheringwaves",
+    icon: <GameIcon src={WutheringWavesLogoSrc} />,
+  },
 ];
 
 const NavSetting: Nav = {
   title: "Settings",
   href: "/setting",
-  icon: <SettingsIcon />,
+  icon: <SettingsIcon fontSize="large" />,
 };
 
-function NavList() {
+const openedMixin = (theme: Theme): CSSObject => ({
+  width: drawerWidth,
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.enteringScreen,
+  }),
+  overflowX: "hidden",
+});
+
+const closedMixin = (theme: Theme): CSSObject => ({
+  transition: theme.transitions.create("width", {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  overflowX: "hidden",
+  width: `calc(${theme.spacing(7)} + 1px)`,
+  [theme.breakpoints.up("sm")]: {
+    width: `calc(${theme.spacing(8)} + 1px)`,
+  },
+});
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+}));
+
+interface AppBarProps extends MuiAppBarProps {
+  open?: boolean;
+}
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  width: drawerWidth,
+  flexShrink: 0,
+  whiteSpace: "nowrap",
+  boxSizing: "border-box",
+  ...(open && {
+    ...openedMixin(theme),
+    "& .MuiDrawer-paper": openedMixin(theme),
+  }),
+  ...(!open && {
+    ...closedMixin(theme),
+    "& .MuiDrawer-paper": closedMixin(theme),
+  }),
+}));
+
+export default function Sidebar() {
+  const theme = useTheme();
+  const location = useLocation();
+  const [open, setOpen] = React.useState(false);
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
   return (
-    <Box display="flex" flexDirection="column" height="100%" padding={1.5}>
-      <Stack direction="column" spacing={2}>
-        {Navs.map((nav, i) => (
-          <NavListItem key={i} {...nav} />
-        ))}
-      </Stack>
-      <Box marginTop="auto">
-        <NavListItem {...NavSetting} />
-      </Box>
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <Drawer variant="permanent" open={open}>
+        <DrawerHeader>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{
+              marginRight: 5,
+              ...(open && { display: "none" }),
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <IconButton onClick={open ? handleDrawerClose : handleDrawerOpen}>
+            {!open ? (
+              <MenuIcon />
+            ) : theme.direction === "rtl" ? (
+              <ChevronRightIcon />
+            ) : (
+              <ChevronLeftIcon />
+            )}
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List>
+          {[...Navs, NavSetting].map((nav, index) => (
+            <ListItem key={nav.title} disablePadding sx={{ display: "block" }}>
+              <Tooltip title={nav.title} placement="right">
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                  selected={location.pathname === nav.href}
+                  component={Link}
+                  to={nav.href}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {nav.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={nav.title}
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
     </Box>
   );
 }
-
-function NavListItem(props: Nav) {
-  const { title, href, icon } = props;
-  const location = useLocation();
-  return (
-    <NavListItemButton
-      component={Link}
-      to={href}
-      activated={location.pathname === href}
-      fullWidth
-    >
-      {icon}
-      <Typography>{title}</Typography>
-    </NavListItemButton>
-  );
-}
-
-const NavListItemButton = styled(Button, {
-  shouldForwardProp: (prop) => prop !== "activated",
-})<{ activated: boolean }>(({ theme, activated }) => ({
-  color: "inherit",
-  paddingX: 0,
-  paddingY: theme.spacing(0.5),
-  display: "inline-flex",
-  flexDirection: "column",
-  textAlign: "center",
-  "& .MuiSvgIcon-root": { fontSize: "2rem" },
-  ...(activated && {
-    color: theme.palette.primary.main,
-    backgroundColor: alpha(
-      theme.palette.primary.main,
-      theme.palette.action.hoverOpacity + 0.05
-    ),
-    "&:hover": {
-      backgroundColor: alpha(
-        theme.palette.primary.main,
-        theme.palette.action.hoverOpacity + 0.05
-      ),
-    },
-  }),
-})) as OverridableComponent<ButtonTypeMap<{ activated: boolean }>>;
-
-const Logo = styled((props) => (
-  <Box {...props}>
-    <img src={LogoSrc} alt="logo" />
-  </Box>
-))(({ theme }) => ({
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  boxSizing: "border-box",
-  userSelect: "none",
-  "& img": {
-    maxHeight: 64,
-    width: "auto",
-    display: "block",
-    padding: theme.spacing(1, 0),
-  },
-}));

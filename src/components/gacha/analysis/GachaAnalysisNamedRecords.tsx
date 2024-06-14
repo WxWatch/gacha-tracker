@@ -23,15 +23,7 @@ export default function GachaAnalysisNamedRecords({
       </Typography>{" "}
       <Stack direction="row" gap={1} flexWrap="wrap">
         {values.values.map((item) => (
-          <GachaItemView
-            facet={facet}
-            key={item.id}
-            name={item.name}
-            id={item.item_id || item.name}
-            isWeapon={item.item_type === "Light Cone"}
-            rank={item.rank_type}
-            size={84}
-          />
+          <GachaItemView facet={facet} key={item.id} item={item} size={100} />
         ))}
       </Stack>
     </Box>

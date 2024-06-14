@@ -6,6 +6,9 @@ import Typography from "@mui/material/Typography";
 import GenshinUIRarity3Background from "@/assets/images/genshin/UI_Rarity_3_Background.png";
 import GenshinUIRarity4Background from "@/assets/images/genshin/UI_Rarity_4_Background.png";
 import GenshinUIRarity5Background from "@/assets/images/genshin/UI_Rarity_5_Background.png";
+import { lookupAssetIcon } from "./icons";
+import { MihoyoRecord } from "@/hooks/useMihoyoRecordsQuery";
+import { KuroRecord } from "@/hooks/useKuroRecordsQuery";
 
 export interface GachaItemViewProps {
   facet: AccountFacet;
@@ -18,7 +21,29 @@ export interface GachaItemViewProps {
   restricted?: boolean;
 }
 
-export default function GachaItemView(props: GachaItemViewProps) {
+export default function GachaItemView({
+  facet,
+  item,
+  size,
+}: {
+  facet: AccountFacet;
+  item: MihoyoRecord | KuroRecord;
+  size?: number;
+}) {
+  switch (facet) {
+    case AccountFacet.Genshin:
+    case AccountFacet.StarRail:
+      return (
+        <MihoyoItemView facet={facet} item={item as MihoyoRecord} size={size} />
+      );
+    case AccountFacet.WutheringWaves:
+      return (
+        <KuroItemView facet={facet} item={item as KuroRecord} size={size} />
+      );
+  }
+}
+
+export function GachaItemViewInternal(props: GachaItemViewProps) {
   const {
     facet,
     name,
@@ -29,7 +54,14 @@ export default function GachaItemView(props: GachaItemViewProps) {
     usedPity,
     restricted = false,
   } = props;
-  const src = getStaticResource(facet, isWeapon ? "weapon" : "character", id);
+
+  const category = isWeapon ? "weapon" : "character";
+  const iconSrc = lookupAssetIcon(facet, category, id);
+
+  if (!iconSrc) {
+    // TODO: default character and/or weapon iconSrc
+    // iconSrc = getRemoteResourceSrc(facet, category, id);
+  }
 
   return (
     <Box
@@ -42,7 +74,7 @@ export default function GachaItemView(props: GachaItemViewProps) {
       data-restricted={restricted}
       title={name}
     >
-      <img src={src} alt={name} />
+      <img src={iconSrc} alt={name} />
       {usedPity && (
         <Typography className={`${GachaItemViewCls}-used-pity`}>
           {usedPity}
@@ -57,12 +89,51 @@ export default function GachaItemView(props: GachaItemViewProps) {
   );
 }
 
-function getStaticResource(
-  facet: AccountFacet,
-  namespace: string,
-  itemIdOrName: string
-) {
-  return `https://hoyo-gacha.lgou2w.com/static/${facet}/${namespace}/${itemIdOrName}.png`;
+export function MihoyoItemView({
+  item,
+  facet,
+  size,
+}: {
+  item: MihoyoRecord;
+  facet: AccountFacet;
+  size?: number;
+}) {
+  console.log("beepo", { item });
+
+  return (
+    <GachaItemViewInternal
+      facet={facet}
+      key={item.id}
+      name={item.name}
+      id={item.item_id}
+      isWeapon={item.item_type === "Light Cone" || item.item_type === "Weapon"}
+      rank={item.rank_type}
+      size={size}
+    />
+  );
+}
+
+export function KuroItemView({
+  item,
+  facet,
+  size,
+}: {
+  item: KuroRecord;
+  facet: AccountFacet;
+  size?: number;
+}) {
+  console.log("beepo", { item });
+  return (
+    <GachaItemViewInternal
+      facet={facet}
+      key={item.id}
+      name={item.name}
+      id={`${item.resourceId}`}
+      isWeapon={item.resourceType === "Weapon"}
+      rank={`${item.qualityLevel}`}
+      size={size}
+    />
+  );
 }
 
 const GachaItemViewCls = "gacha-item-view";
@@ -78,6 +149,7 @@ const GachaItemViewSx: SxProps<Theme> = {
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     borderRadius: 2,
+    objectFit: "cover", // or use scale-down
   },
   '&[data-facet="genshin"]': {
     '&[data-rank="3"] > img': {
@@ -106,7 +178,7 @@ const GachaItemViewSx: SxProps<Theme> = {
   "& > .MuiTypography-root": {
     textAlign: "center",
     lineHeight: "1rem",
-    fontSize: "0.75rem",
+    // fontSize: "0.75rem",
     userSelect: "none",
     position: "absolute",
     paddingX: 0.2,

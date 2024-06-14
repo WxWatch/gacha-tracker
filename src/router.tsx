@@ -7,6 +7,9 @@ import Index from "@/routes/index";
 import Genshin, { loader as genshinLoader } from "@/routes/genshin";
 import StarRail, { loader as starrailLoader } from "@/routes/starrail";
 import Setting from "@/routes/setting";
+import WutheringWaves, {
+  loader as wutheringwavesloader,
+} from "./routes/wutheringwaves";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +27,11 @@ const router = createBrowserRouter([
         path: "/starrail",
         element: <StarRail />,
         loader: starrailLoader(queryClient),
+      },
+      {
+        path: "/wutheringwaves",
+        element: <WutheringWaves />,
+        loader: wutheringwavesloader(queryClient),
       },
       {
         path: "/setting",

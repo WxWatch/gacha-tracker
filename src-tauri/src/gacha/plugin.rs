@@ -2,13 +2,21 @@ extern crate reqwest;
 extern crate tauri;
 extern crate time;
 
+use super::hoyoverse::genshin::GenshinGacha;
+use super::hoyoverse::hoyoverse::create_fetcher_channel;
+use super::hoyoverse::hoyoverse::GachaRecordFetcherChannelFragment;
+use super::hoyoverse::starrail::StarRailGacha;
+use super::hoyoverse::utilities::find_hoyoverse_gacha_url_and_validate_consistency;
+use super::kuro::kuro::create_kuro_fetcher_channel;
+use super::kuro::kuro::KuroGachaRecordFetcherChannelFragment;
+use super::kuro::utilities::find_kuro_gacha_url_and_validate_consistency;
+use super::kuro::wutheringwaves::WutheringWavesGacha;
 use super::srgf;
 use super::uigf;
-use super::utilities::{create_default_reqwest, find_gacha_url_and_validate_consistency};
-use super::{
-    create_fetcher_channel, GachaRecordFetcherChannelFragment, GachaUrlFinder,
-    GameDataDirectoryFinder, GenshinGacha, StarRailGacha,
-};
+use super::utilities::create_default_reqwest;
+use super::GachaUrl;
+use super::GachaUrlFinder;
+use super::GameDataDirectoryFinder;
 use crate::constants;
 use crate::error::{Error, Result};
 use crate::storage::entity_account::AccountFacet;
@@ -27,6 +35,7 @@ async fn find_game_data_directories(facet: AccountFacet) -> Result<Vec<PathBuf>>
     match facet {
         AccountFacet::Genshin => GenshinGacha.find_game_data_directories(),
         AccountFacet::StarRail => StarRailGacha.find_game_data_directories(),
+        AccountFacet::WutheringWaves => WutheringWavesGacha.find_game_data_directories(),
     }
 }
 
@@ -36,16 +45,36 @@ async fn find_gacha_url(
     uid: String,
     game_data_dir: PathBuf,
 ) -> Result<String> {
-    let gacha_url = match facet {
+    let gacha_url: GachaUrl = match facet {
         AccountFacet::Genshin => {
             let gacha_urls = GenshinGacha.find_gacha_urls(game_data_dir)?;
-            find_gacha_url_and_validate_consistency(&GenshinGacha, &facet, &uid, &gacha_urls)
-                .await?
+            find_hoyoverse_gacha_url_and_validate_consistency(
+                &GenshinGacha,
+                &facet,
+                &uid,
+                &gacha_urls,
+            )
+            .await?
         }
         AccountFacet::StarRail => {
             let gacha_urls = StarRailGacha.find_gacha_urls(game_data_dir)?;
-            find_gacha_url_and_validate_consistency(&StarRailGacha, &facet, &uid, &gacha_urls)
-                .await?
+            find_hoyoverse_gacha_url_and_validate_consistency(
+                &StarRailGacha,
+                &facet,
+                &uid,
+                &gacha_urls,
+            )
+            .await?
+        }
+        AccountFacet::WutheringWaves => {
+            let gacha_urls = WutheringWavesGacha.find_gacha_urls(game_data_dir)?;
+            find_kuro_gacha_url_and_validate_consistency(
+                &WutheringWavesGacha,
+                &facet,
+                &uid,
+                &gacha_urls,
+            )
+            .await?
         }
     };
 
@@ -60,7 +89,7 @@ async fn pull_all_gacha_records(
     facet: AccountFacet,
     #[allow(unused)] uid: String,
     gacha_url: String,
-    gacha_type_and_last_end_id_mappings: BTreeMap<String, Option<String>>,
+    gacha_type_and_last_query_mappings: BTreeMap<String, Option<String>>,
     event_channel: String,
     save_to_storage: Option<bool>,
 ) -> Result<()> {
@@ -76,7 +105,7 @@ async fn pull_all_gacha_records(
                 reqwest,
                 GenshinGacha,
                 gacha_url,
-                gacha_type_and_last_end_id_mappings,
+                gacha_type_and_last_query_mappings,
                 |fragment| async {
                     window.emit(&event_channel, &fragment)?;
                     if save_to_storage {
@@ -95,12 +124,32 @@ async fn pull_all_gacha_records(
                 reqwest,
                 StarRailGacha,
                 gacha_url,
-                gacha_type_and_last_end_id_mappings,
+                gacha_type_and_last_query_mappings,
                 |fragment| async {
                     window.emit(&event_channel, &fragment)?;
                     if save_to_storage {
                         if let GachaRecordFetcherChannelFragment::Data(data) = fragment {
                             storage.save_starrail_gacha_records(&data).await?;
+                        }
+                    }
+                    Ok(())
+                },
+            )
+            .await?
+        }
+        AccountFacet::WutheringWaves => {
+            create_kuro_fetcher_channel(
+                WutheringWavesGacha,
+                reqwest,
+                WutheringWavesGacha,
+                uid,
+                gacha_url,
+                gacha_type_and_last_query_mappings,
+                |fragment| async {
+                    window.emit(&event_channel, &fragment)?;
+                    if save_to_storage {
+                        if let KuroGachaRecordFetcherChannelFragment::Data(data) = fragment {
+                            storage.save_wutheringwaves_gacha_records(&data).await?;
                         }
                     }
                     Ok(())
@@ -147,6 +196,19 @@ async fn import_gacha_records(
             let gacha_records = srgf::convert_srgf_to_offical(&mut srgf)?;
             storage.save_starrail_gacha_records(&gacha_records).await
         }
+        AccountFacet::WutheringWaves => {
+            //TODO: ww-ify this
+            let mut srgf = srgf::SRGF::from_reader(file)?;
+            if srgf.info.uid != uid {
+                return Err(Error::UIGFOrSRGFMismatchedUID {
+                    expected: uid,
+                    actual: srgf.info.uid,
+                });
+            }
+
+            let gacha_records = srgf::convert_srgf_to_offical(&mut srgf)?;
+            storage.save_starrail_gacha_records(&gacha_records).await
+        }
     }
 }
 
@@ -173,6 +235,7 @@ async fn export_gacha_records(
     let (primary, format) = match facet {
         AccountFacet::Genshin => ("Unified Standardized GenshinData Format", "UIGF"),
         AccountFacet::StarRail => ("Star Rail GachaLog Format", "SRGF"),
+        AccountFacet::WutheringWaves => ("Wuthering Waves Proprietary Format", "WWPF"),
     };
     let filename = format!(
         "{}_{}_{}_{uid}_{time}.json",
@@ -197,6 +260,22 @@ async fn export_gacha_records(
             uigf.to_writer(writer, false)?;
         }
         AccountFacet::StarRail => {
+            let gacha_records = storage
+                .find_starrail_gacha_records(&uid, None, None)
+                .await?;
+            let lang = gacha_records
+                .first()
+                .map(|v| v.lang.clone())
+                .unwrap_or("en-us".to_owned());
+            let time_zone = 8; // TODO: export time zone
+
+            // convert to srgf and write
+            let srgf_list = srgf::convert_offical_to_srgf(&gacha_records)?;
+            let srgf = srgf::SRGF::new(uid, lang, time_zone, &now, srgf_list)?;
+            srgf.to_writer(writer, false)?;
+        }
+        AccountFacet::WutheringWaves => {
+            //TODO: This is badge
             let gacha_records = storage
                 .find_starrail_gacha_records(&uid, None, None)
                 .await?;

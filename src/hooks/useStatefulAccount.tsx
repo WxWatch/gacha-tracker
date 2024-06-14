@@ -108,7 +108,6 @@ export function createStatefulAccountLoader(
 }
 
 /// Hook
-
 export const withStatefulAccount = (
   facet: AccountFacet,
   Wrapped: React.ComponentType<{

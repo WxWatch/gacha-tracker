@@ -21,7 +21,7 @@ export async function pullAllGachaRecords(
   uid: Account["uid"],
   payload: {
     gachaUrl: string;
-    gachaTypeAndLastEndIdMappings: Record<
+    gachaTypeAndLastQueryMappings: Record<
       GenshinGachaRecord["gacha_type"] | StarRailGachaRecord["gacha_type"],
       GenshinGachaRecord["id"] | StarRailGachaRecord["id"] | null
     >;

@@ -16,7 +16,7 @@ export default function AccountMenu() {
   const selectedAccount = selectedAccountUid
     ? accounts[selectedAccountUid]
     : null;
-  const displayName = resolveAccountDisplayName(facet, selectedAccount);
+  const displayName = resolveAccountDisplayName(selectedAccount);
   const [{ drawer, dialog }, produceState] = useImmer({
     drawer: false,
     dialog: {
@@ -40,7 +40,7 @@ export default function AccountMenu() {
             {displayName}
           </Typography>
           <Typography variant="caption" lineHeight={1} textTransform="none">
-            {selectedAccount?.uid || "NULL UID"}
+            {selectedAccount?.uid || "No UID"}
           </Typography>
         </Stack>
       </Button>

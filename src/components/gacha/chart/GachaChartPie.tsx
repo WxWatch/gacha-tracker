@@ -6,19 +6,20 @@ import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { getItemType } from "@/interfaces/gacha";
 
 export default function GachaChartCalendar() {
   const {
     facet,
     gachaRecords: {
       aggregatedValues,
-      namedValues: { character, weapon, permanent, newbie },
+      namedValues: { character, weapon, permanent, beginner },
     },
   } = useGachaLayoutContext();
 
   const itemTypesData = aggregatedValues.values.reduce((acc, cur) => {
     console.log("cur", cur);
-    const key = cur.item_type;
+    const key = getItemType(facet, cur);
     if (!acc[key]) {
       acc[key] = 1;
     } else {
@@ -75,7 +76,7 @@ export default function GachaChartCalendar() {
                   value: weapon.total,
                 },
                 { id: "Permanent", value: permanent.total },
-                { id: "Newbie", value: newbie.total },
+                { id: "Newbie", value: beginner.total },
               ]}
             />
           </Box>
@@ -87,8 +88,8 @@ export default function GachaChartCalendar() {
 
 const PieProps: Partial<PieSvgProps<MayHaveLabel & Record<string, unknown>>> = {
   theme: {
-    fontFamily: "inherit",
-    fontSize: 14,
+    // fontFamily: "inherit",
+    // fontSize: 14,
   },
   margin: { top: 36, right: 36, bottom: 60, left: 36 },
   colors: ["#0288d188", "#9c27b088", "#ed6c0288", "#f4433688"],

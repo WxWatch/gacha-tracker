@@ -1,13 +1,12 @@
-mod declare;
+pub mod dict;
+mod gacha;
+pub mod hoyoverse;
+pub mod kuro;
+pub mod plugin;
 mod utilities;
-mod impl_genshin;
-mod impl_starrail;
-mod plugin;
 
-pub mod uigf;
 pub mod srgf;
+pub mod uigf;
 
-pub use declare::*;
-pub use impl_genshin::*;
-pub use impl_starrail::*;
-pub use plugin::*;
+pub use gacha::*;
+// pub use plugin::*;

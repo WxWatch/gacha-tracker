@@ -8,6 +8,8 @@ import GachaActionTabs, {
   GachaActionTabsProps,
 } from "@/components/gacha/toolbar/GachaActionTabs";
 import Stack from "@mui/material/Stack";
+import AccountMenu from "@/components/account/AccountMenu";
+import GachaActionUpdate from "./GachaActionUpdate";
 
 export interface GachaToolbarProps {
   facet: AccountFacet;
@@ -17,15 +19,12 @@ export interface GachaToolbarProps {
 export default function GachaToolbar(props: GachaToolbarProps) {
   const { ActionTabsProps } = props;
   return (
-    <Stack direction="row" gap={2}>
-      <GachaActionUrl />
-      <GachaActionFetch />
-      <Stack direction="row" gap={3} marginLeft="auto">
-        <GachaActionTabs {...ActionTabsProps} />
-        <Stack direction="row" gap={1}>
-          <GachaActionImport />
-          <GachaActionExport />
-        </Stack>
+    <Stack direction="row" gap={2} justifyContent="space-between">
+      <GachaActionTabs {...ActionTabsProps} />
+      {/* <GachaActionUrl /> */}
+      <Stack direction="row">
+        <GachaActionUpdate />
+        <AccountMenu />
       </Stack>
     </Stack>
   );

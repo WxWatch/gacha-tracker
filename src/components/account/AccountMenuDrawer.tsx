@@ -85,7 +85,7 @@ export default function AccountMenuDrawer(props: AccountMenuDrawerProps) {
                   <AccountAvatar facet={account.facet} />
                 </ListItemAvatar>
                 <ListItemText
-                  primary={resolveAccountDisplayName(account.facet, account)}
+                  primary={resolveAccountDisplayName(account)}
                   primaryTypographyProps={{
                     color:
                       selectedAccountUid === account.uid

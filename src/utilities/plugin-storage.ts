@@ -1,5 +1,9 @@
 import { AccountFacet, Account } from "@/interfaces/account";
-import { GenshinGachaRecord, StarRailGachaRecord } from "@/interfaces/gacha";
+import {
+  GenshinGachaRecord,
+  StarRailGachaRecord,
+  WutheringWavesGachaRecord,
+} from "@/interfaces/gacha";
 import invoke from "@/utilities/invoke";
 
 export type AccountUid = Account["uid"];
@@ -86,7 +90,13 @@ export async function findGachaRecords(
 export async function findGachaRecords(
   facet: AccountFacet,
   payload: FindGachaRecordsPayload
-): Promise<Array<GenshinGachaRecord | StarRailGachaRecord>> {
+): Promise<Array<WutheringWavesGachaRecord>>;
+export async function findGachaRecords(
+  facet: AccountFacet,
+  payload: FindGachaRecordsPayload
+): Promise<
+  Array<GenshinGachaRecord | StarRailGachaRecord | WutheringWavesGachaRecord>
+> {
   return invoke(`plugin:storage|find_${facet}_gacha_records`, payload);
 }
 
@@ -99,8 +109,14 @@ export async function saveGachaRecords(
   records: Array<StarRailGachaRecord>
 ): Promise<number>;
 export async function saveGachaRecords(
+  facet: AccountFacet.StarRail,
+  records: Array<WutheringWavesGachaRecord>
+): Promise<number>;
+export async function saveGachaRecords(
   facet: AccountFacet,
-  records: Array<GenshinGachaRecord | StarRailGachaRecord>
+  records: Array<
+    GenshinGachaRecord | StarRailGachaRecord | WutheringWavesGachaRecord
+  >
 ): Promise<number> {
   return invoke(`plugin:storage|save_${facet}_gacha_records`, { records });
 }
