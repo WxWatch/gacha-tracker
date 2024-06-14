@@ -7,7 +7,7 @@ use sea_orm::ActiveValue;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "wutheringwaves_gacha_records")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
+    #[sea_orm(primary_key)]
     pub id: String,
     #[sea_orm(indexed)]
     pub uid: String,

@@ -56,11 +56,11 @@ export function GachaItemViewInternal(props: GachaItemViewProps) {
   } = props;
 
   const category = isWeapon ? "weapon" : "character";
-  const icon = lookupAssetIcon(facet, category, id);
+  let iconSrc = lookupAssetIcon(facet, category, id);
 
-  let src = icon?.[1];
-  if (!src) {
-    src = getRemoteResourceSrc(facet, category, id);
+  if (!iconSrc) {
+    // TODO: default character and/or weapon iconSrc
+    // iconSrc = getRemoteResourceSrc(facet, category, id);
   }
 
   return (
@@ -74,7 +74,7 @@ export function GachaItemViewInternal(props: GachaItemViewProps) {
       data-restricted={restricted}
       title={name}
     >
-      <img src={src} alt={name} />
+      <img src={iconSrc} alt={name} />
       {usedPity && (
         <Typography className={`${GachaItemViewCls}-used-pity`}>
           {usedPity}
@@ -98,13 +98,15 @@ export function MihoyoItemView({
   facet: AccountFacet;
   size?: number;
 }) {
+  console.log("beepo", { item });
+
   return (
     <GachaItemViewInternal
       facet={facet}
       key={item.id}
       name={item.name}
-      id={item.item_id || item.name}
-      isWeapon={item.item_type === "Light Cone"}
+      id={item.item_id}
+      isWeapon={item.item_type === "Light Cone" || item.item_type === "Weapon"}
       rank={item.rank_type}
       size={size}
     />
@@ -120,25 +122,18 @@ export function KuroItemView({
   facet: AccountFacet;
   size?: number;
 }) {
+  console.log("beepo", { item });
   return (
     <GachaItemViewInternal
       facet={facet}
       key={item.id}
       name={item.name}
-      id={`${item.resourceId}` || item.name}
-      isWeapon={item.resourceType === "Light Cone"}
+      id={`${item.resourceId}`}
+      isWeapon={item.resourceType === "Weapon"}
       rank={`${item.qualityLevel}`}
       size={size}
     />
   );
-}
-
-function getRemoteResourceSrc(
-  facet: AccountFacet,
-  category: string,
-  itemIdOrName: string
-) {
-  return `https://hoyo-gacha.lgou2w.com/static/${facet}/${category}/cutted/${itemIdOrName}.png`;
 }
 
 const GachaItemViewCls = "gacha-item-view";
@@ -154,6 +149,7 @@ const GachaItemViewSx: SxProps<Theme> = {
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     borderRadius: 2,
+    objectFit: "cover", //or use scale-down
   },
   '&[data-facet="genshin"]': {
     '&[data-rank="3"] > img': {

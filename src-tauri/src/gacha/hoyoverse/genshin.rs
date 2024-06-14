@@ -11,7 +11,8 @@ use crate::gacha::hoyoverse::utilities::lookup_mihoyo_dir;
 use crate::gacha::utilities::{
     lookup_gacha_urls_from_endpoint, lookup_path_line_from_keyword, lookup_valid_cache_data_dir,
 };
-use crate::gacha::{GachaRecord, GachaUrl, GachaUrlFinder, GameDataDirectoryFinder};
+use crate::gacha::{dict, GachaRecord, GachaUrl, GachaUrlFinder, GameDataDirectoryFinder};
+use crate::storage::entity_account::AccountFacet;
 use async_trait::async_trait;
 use reqwest::Client as Reqwest;
 use serde::{Deserialize, Serialize};
@@ -117,7 +118,21 @@ impl HoyoverseGachaRecordFetcher for GenshinGacha {
         )
         .await?;
 
-        Ok(response.data.map(|pagination| pagination.list))
+        Ok(response.data.map(|pagination| {
+            pagination
+                .list
+                .into_iter()
+                .map(|mut record| {
+                    if let Some(entry) =
+                        dict::embedded::name(&AccountFacet::Genshin, "en-us", &record.name)
+                    {
+                        record.item_id = entry.item_id.to_string();
+                    }
+
+                    record
+                })
+                .collect()
+        }))
     }
 
     async fn fetch_gacha_records_any_uid(

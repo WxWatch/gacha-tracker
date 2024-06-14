@@ -89,7 +89,7 @@ async fn pull_all_gacha_records(
     facet: AccountFacet,
     #[allow(unused)] uid: String,
     gacha_url: String,
-    gacha_type_and_last_end_id_mappings: BTreeMap<String, Option<String>>,
+    gacha_type_and_last_query_mappings: BTreeMap<String, Option<String>>,
     event_channel: String,
     save_to_storage: Option<bool>,
 ) -> Result<()> {
@@ -105,7 +105,7 @@ async fn pull_all_gacha_records(
                 reqwest,
                 GenshinGacha,
                 gacha_url,
-                gacha_type_and_last_end_id_mappings,
+                gacha_type_and_last_query_mappings,
                 |fragment| async {
                     window.emit(&event_channel, &fragment)?;
                     if save_to_storage {
@@ -124,7 +124,7 @@ async fn pull_all_gacha_records(
                 reqwest,
                 StarRailGacha,
                 gacha_url,
-                gacha_type_and_last_end_id_mappings,
+                gacha_type_and_last_query_mappings,
                 |fragment| async {
                     window.emit(&event_channel, &fragment)?;
                     if save_to_storage {
@@ -144,7 +144,7 @@ async fn pull_all_gacha_records(
                 WutheringWavesGacha,
                 uid,
                 gacha_url,
-                gacha_type_and_last_end_id_mappings,
+                gacha_type_and_last_query_mappings,
                 |fragment| async {
                     window.emit(&event_channel, &fragment)?;
                     if save_to_storage {

@@ -25,6 +25,7 @@ use super::utilities::{
 };
 use crate::constants::DATABASE;
 use crate::error::{Error, Result};
+use crate::gacha::dict;
 use crate::gacha::hoyoverse::genshin::GenshinGachaRecord;
 use crate::gacha::hoyoverse::starrail::StarRailGachaRecord;
 use crate::gacha::kuro::wutheringwaves::WutheringWavesGachaRecord;
@@ -132,6 +133,29 @@ impl Storage {
             statements.extend(account_index);
             statements.push(account_facet_index);
             execute_statements(&self.database, &statements).await?;
+        }
+
+        {
+            debug!("Checking for Genshin Impact Item ID Updates...");
+            let records = GenshinGachaRecordEntity::find()
+                .filter(GenshinGachaRecordColumn::ItemId.eq(""))
+                .all(&self.database)
+                .await?;
+            debug!("The records: {:?}", records);
+
+            let txn = self.database.begin().await?;
+            for record in records {
+                let mut model = GenshinGachaRecordActiveModel::from(record.clone());
+                if let Some(entry) = dict::embedded::name(
+                    &AccountFacet::Genshin,
+                    "en-us",
+                    &model.clone().name.unwrap(),
+                ) {
+                    model.item_id = ActiveValue::Set(entry.item_id.to_string());
+                }
+                model.update(&txn).await?;
+            }
+            txn.commit().await?;
         }
 
         debug!("Storage initialized");

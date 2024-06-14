@@ -383,7 +383,7 @@ function GachaOverviewLatest({
           flexShrink: 1,
         }}
       >
-        <Box sx={{ background: "red", height: 100, width: 100 }}>
+        <Box sx={{ height: 100, width: 100 }}>
           <GachaItemView facet={facet} key={last.id} item={last} />
         </Box>
 

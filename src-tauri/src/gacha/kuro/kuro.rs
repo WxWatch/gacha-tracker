@@ -32,6 +32,7 @@ pub trait KuroGachaRecordFetcher {
         uid: &str,
         gacha_url: &str,
         gacha_type: Option<&str>,
+        last_time: Option<&str>,
     ) -> Result<Option<Vec<Self::Target>>>;
 }
 
@@ -60,6 +61,7 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         uid: &str,
         gacha_url: &str,
         gacha_type: &str,
+        last_time: Option<&str>,
     ) -> Result<()> {
         const SLEEPING: u64 = 3;
 
@@ -72,7 +74,7 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         tokio::time::sleep(tokio::time::Duration::from_secs(SLEEPING)).await;
 
         let gacha_records = fetcher
-            .fetch_gacha_records(reqwest, uid, gacha_url, Some(gacha_type))
+            .fetch_gacha_records(reqwest, uid, gacha_url, Some(gacha_type), last_time)
             .await?;
 
         if let Some(gacha_records) = gacha_records {
@@ -96,11 +98,19 @@ pub trait KuroGachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Sen
         sender: &tokio::sync::mpsc::Sender<KuroGachaRecordFetcherChannelFragment<T>>,
         uid: &str,
         gacha_url: &str,
-        gacha_type_and_last_end_id_mappings: &BTreeMap<String, Option<String>>,
+        gacha_type_and_last_time_mappings: &BTreeMap<String, Option<String>>,
     ) -> Result<()> {
-        for (gacha_type, last_end_id) in gacha_type_and_last_end_id_mappings {
-            self.pull_gacha_records(reqwest, fetcher, sender, uid, gacha_url, gacha_type)
-                .await?;
+        for (gacha_type, last_time) in gacha_type_and_last_time_mappings {
+            self.pull_gacha_records(
+                reqwest,
+                fetcher,
+                sender,
+                uid,
+                gacha_url,
+                gacha_type,
+                last_time.as_deref(),
+            )
+            .await?;
         }
         Ok(())
     }
@@ -112,7 +122,7 @@ pub async fn create_kuro_fetcher_channel<Record, FetcherChannel, F, Fut>(
     fetcher: FetcherChannel::Fetcher,
     uid: String,
     gacha_url: String,
-    gacha_type_and_last_end_id_mappings: BTreeMap<String, Option<String>>,
+    gacha_type_and_last_time_mappings: BTreeMap<String, Option<String>>,
     receiver_fn: F,
 ) -> Result<()>
 where
@@ -133,7 +143,7 @@ where
                 &sender,
                 &uid,
                 &gacha_url,
-                &gacha_type_and_last_end_id_mappings,
+                &gacha_type_and_last_time_mappings,
             )
             .await
     });

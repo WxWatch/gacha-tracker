@@ -1,6 +1,6 @@
 import React from "react";
 import { useImmer } from "use-immer";
-import { resolveCurrency } from "@/interfaces/account";
+import { AccountFacet, resolveCurrency } from "@/interfaces/account";
 import {
   useUpdateAccountGachaUrlFn,
   useUpdateAccountPropertiesFn,
@@ -28,14 +28,26 @@ import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import GachaMenuItemImport from "./GachaMenuItemImport";
 import GachaMenuItemExport from "./GachaMenuItemExport";
+import PluginGacha from "@/utilities/plugin-gacha";
+import {
+  KnownWutheringWavesGachaTypes,
+  NamedKuroRecords,
+} from "@/hooks/useKuroRecordsQuery";
+import {
+  KnownGenshinGachaTypes,
+  KnownStarRailGachaTypes,
+  NamedMihoyoRecords,
+} from "@/hooks/useMihoyoRecordsQuery";
+import { GachaCategory } from "@/hooks/constants";
 
 export default function GachaActionUpdate() {
-  const { selectedAccount, gachaRecords, alert } = useGachaLayoutContext();
+  const { facet, selectedAccount, gachaRecords, alert } =
+    useGachaLayoutContext();
   const { currentFragment, pull } = useGachaRecordsFetcher();
   const { action } = resolveCurrency(selectedAccount.facet);
   const updateAccountGachaUrl = useUpdateAccountGachaUrlFn();
   const updateAccountProperties = useUpdateAccountPropertiesFn();
-  const refetchGachaRecords = useRefetchGachaRecordsFn();
+  const refetchGachaRecords = useRefetchGachaRecordsFn(facet);
   const [{ busy }, produceState] = useImmer({
     busy: false,
   });
@@ -62,6 +74,114 @@ export default function GachaActionUpdate() {
     setMenuOpen(false);
   };
 
+  const getTheStuff = (
+    facet: AccountFacet,
+    namedValues:
+      | Record<GachaCategory, NamedKuroRecords>
+      | Record<GachaCategory, NamedMihoyoRecords>
+  ): Record<string, string | null> => {
+    let gachaTypes = null;
+    switch (facet) {
+      case AccountFacet.Genshin:
+        gachaTypes = KnownGenshinGachaTypes;
+        break;
+      case AccountFacet.StarRail:
+        gachaTypes = KnownStarRailGachaTypes;
+        break;
+      case AccountFacet.WutheringWaves:
+        gachaTypes = KnownWutheringWavesGachaTypes;
+    }
+    return Object.entries(gachaTypes).reduce(
+      (mappings, [gachaType, category]) => {
+        switch (facet) {
+          case AccountFacet.Genshin:
+          case AccountFacet.StarRail:
+            mappings[gachaType] = namedValues[category].lastEndId || null;
+            break;
+          case AccountFacet.WutheringWaves:
+            mappings[gachaType] = namedValues[category].lastTime || null;
+            break;
+        }
+
+        return mappings;
+      },
+      {} as Record<string, string | null>
+    );
+  };
+
+  const handleUpdate = React.useCallback(async () => {
+    produceState((draft) => {
+      draft.busy = true;
+    });
+
+    const { facet, uid, gameDataDir, gachaUrl } = selectedAccount;
+    let newGachaUrl = null;
+    try {
+      newGachaUrl = await PluginGacha.findGachaUrl(facet, uid, gameDataDir);
+      // const newGachaUrl =
+      //   "https://webstatic-sea.hoyoverse.com/genshin/event/e20190909gacha-v2/index.html?win_mode=fullscreen&authkey_ver=1&sign_type=2&auth_appid=webview_gacha&init_type=301&gacha_id=89755dc7cbe9a8c2a6c48fc0f2c3992e9b2d590e&timestamp=1684884838&lang=en&device_type=pc&game_version=OSRELWin3.7.0_R14937036_S14962190_D15063751&plat_type=pc&region=os_usa&authkey=yyWiX7aE4nqim1sWgBG9%2f0R9n7aeFIYChfqdOs3jxRnPb%2bKj%2bCpYFf%2bxucXKTEr%2bW%2b8m44KHSvaeUWKUf4DuG0bqNy%2baj5wTfQEjwwlQwjCyeb2Ox30XxcoS9NbKPgDloqyqVpZfCrUM%2bbEPNSNljSzUCSiT6ZCSfRfLmXaBtPMk%2baBj6JTIvVd9HZXDDOoIIDjM0ebuZAk1dMflhLiewcxM0%2f2%2fYoYb5XdV6ajoUrWjvOo96UIJW2sO%2bj6jsDIN4H2wERQUrN3Y0Vkn8pF98OHxdhR4Whxs%2b1%2fhbp0upqIuk1cn9XQCylgVPAX9tguYarFYbHDf1B8w2IQKDeuPh38y%2fG3EOkXq783BttMrR3hudyXcdU0lgNZ1dRJdB4udvyfGfPBuKGn%2bShGjLECKhJ0ClDZMR8ir41ezyChpt5whbuXcMoG%2bc87yYbe3nzaYkkGo1HyopZ4S9IHkldekf%2fLRozTuKs9AZeBsjXybp6nfTJse6O6qiKbu%2f3rCxsEBcJNJTldzdmtGvNLefnZDmpOsobm%2bANPuukkRzumNzeOBTfOt9Qvn2zLuRSwHPeMCZ49pNiGGCw4fm%2f2m%2bbuyMb%2fFEh5J3qOogccADoJP0r4DWOdUBa891R39rCHAvFVCZp4dJbl7TY4ro2LnPDvbgMc5wm3yTkdjcqgB2MjxjsE9%2bdMi%2bHTdHzMeoTUWMKvpT1WXVE7523yWcFcdfuqouEEzrL4dAllaC%2b4EmEEhcATXSESghD5fHUROCVNnZ6fivfdkNuXFJmvFf7hzprF0AUOggGPH55KR3Lua2AaoCMQbbx4fEKINzVIz4mvN67%2b3UA1kjnjT92I4a1s7LfhgxLnG%2fWGX8s6PtIUSiSdfxcKQb2kvolQVv%2b1WlAfT1XhNvYZ%2fPtgPz2mvoFDkSe%2f54fBWGTTo6sAhMWueyw8Br2mcxuG5Z7vAgF%2baqsGYvS9DZ2%2brQqiR6SjEgKEdOV6EGmKhXsUJUQCGnL6MuTu6CX%2f1Gd%2fXHtQZ6Ew5fMm6h%2bTGEf%2fpNnK%2bpHSMDWUyWxwHZNRk1HdnYueE5MebSi2biSdCLa7F3b3pSCKutguPm7QVkQO2Wb1Rmk44wuMSzJMpoXymqRQT5lNJ8ski4OAKZj3WdG1NFZnAk27ORXk43IALUVeX3Ijw5%2b3aRt0uaLudH8ZJ1pBLAb4ODmtG1N%2b7eoe9TNzwKZrgyBd8Cn5dZ7YBxf2uxABJmYS9Cbs2w0sBAmQH0RpVx6qpdyGj47RGiXJoAN2ObgYGMhFAMmWDx8Q9QIQpEDFnnoJ1cXBb2mzedJEyMb5w6UvvVKIJCsTKtNJUOEyWxQIsbhsrIq8z4%2bLNa4%2fL6b%2bUog95z6kMFYxiyg%3d%3d&game_biz=";
+      if (newGachaUrl !== gachaUrl) {
+        // Update gacha url only if it's changed
+        await updateAccountGachaUrl(facet, uid, newGachaUrl);
+      }
+      alert(null, "Read the link successfully!");
+    } catch (e) {
+      alert(e);
+    } finally {
+      produceState((draft) => {
+        draft.busy = false;
+      });
+    }
+
+    if (!newGachaUrl) {
+      // alert("Link not available! Please try to read the link first.");
+      return;
+    }
+
+    produceState((draft) => {
+      draft.busy = true;
+    });
+    try {
+      const { namedValues } = gachaRecords;
+      await pull(facet, uid, {
+        gachaUrl: newGachaUrl,
+        gachaTypeAndLastQueryMappings: getTheStuff(facet, namedValues),
+        eventChannel: "gachaRecords-fetcher-event-channel",
+        saveToStorage: true,
+      });
+      await updateAccountProperties(facet, uid, {
+        ...selectedAccount.properties,
+        lastGachaUpdated: new Date().toISOString(),
+      });
+      await refetchGachaRecords(facet, uid);
+      alert(null, "Record updated successfully!");
+    } catch (e) {
+      // TODO: optimize error handling
+      const isTimeoutdGachaUrlError =
+        e && (e instanceof Error || typeof e === "object")
+          ? "identifier" in e && e.identifier === "TIMEOUTD_GACHA_URL"
+          : false;
+
+      if (isTimeoutdGachaUrlError) {
+        await updateAccountGachaUrl(facet, uid, null);
+      }
+      alert(e);
+    } finally {
+      produceState((draft) => {
+        draft.busy = false;
+      });
+    }
+  }, [
+    selectedAccount,
+    gachaRecords,
+    alert,
+    pull,
+    updateAccountGachaUrl,
+    updateAccountProperties,
+    refetchGachaRecords,
+    produceState,
+  ]);
+
   const handleFetch = React.useCallback(async () => {
     if (!selectedAccount.gachaUrl) {
       alert("Link not available! Please try to read the link first.");
@@ -79,7 +199,7 @@ export default function GachaActionUpdate() {
       } = gachaRecords;
       await pull(facet, uid, {
         gachaUrl,
-        gachaTypeAndLastEndIdMappings: {
+        gachaTypeAndLastQueryMappings: {
           [character.gachaType]: character.lastEndId ?? null,
           [weapon.gachaType]: weapon.lastEndId ?? null,
           [permanent.gachaType]: permanent.lastEndId ?? null,
@@ -131,6 +251,7 @@ export default function GachaActionUpdate() {
     } else if ("ready" in currentFragment) {
       const gachaType = currentFragment.ready;
       const category = gachaRecords.gachaTypeToCategoryMappings[gachaType];
+      console.log("gachaRecords", gachaRecords, category);
       const categoryTitle = gachaRecords.namedValues[category].categoryTitle;
       setCurrentCategory(categoryTitle);
     } else if ("pagination" in currentFragment) {
@@ -190,7 +311,7 @@ export default function GachaActionUpdate() {
           color="primary"
           size="small"
           startIcon={<CachedIcon />}
-          onClick={handleFetch}
+          onClick={handleUpdate}
           disabled={busy}
         >
           {`Update`}

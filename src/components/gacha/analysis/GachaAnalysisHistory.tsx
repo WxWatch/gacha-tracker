@@ -122,7 +122,7 @@ function GachaAnalysisHistoryList({
   );
 }
 
-const GachaAnalysisHistoryItemViewSize = 84;
+const GachaAnalysisHistoryItemViewSize = 100;
 const GachaAnalysisHistoryListCls = "gacha-analysis-history-list";
 const GachaAnalysisHistoryListSx: SxProps<Theme> = {
   flexDirection: "row",

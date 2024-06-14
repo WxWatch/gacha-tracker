@@ -35,20 +35,14 @@ export function useGachaRecordsQuery(
 }
 
 /// Hook
-export function useRefetchGachaRecordsFn() {
-  const queryClient = useQueryClient();
-  return React.useCallback(
-    async (facet: AccountFacet, uid: Account["uid"]) => {
-      switch (facet) {
-        case AccountFacet.Genshin:
-        case AccountFacet.StarRail:
-          await useRefetchMihoyoRecordsFn();
-        case AccountFacet.WutheringWaves:
-          await useRefetchKuroRecordsFn();
-      }
-    },
-    [queryClient]
-  );
+export function useRefetchGachaRecordsFn(facet: AccountFacet) {
+  switch (facet) {
+    case AccountFacet.Genshin:
+    case AccountFacet.StarRail:
+      return useRefetchMihoyoRecordsFn();
+    case AccountFacet.WutheringWaves:
+      return useRefetchKuroRecordsFn();
+  }
 }
 
 /// Types

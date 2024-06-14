@@ -1,3 +1,4 @@
+pub mod dict;
 mod gacha;
 pub mod hoyoverse;
 pub mod kuro;

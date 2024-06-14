@@ -7,6 +7,7 @@ use std::cmp::Ordering;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
+use time::macros::format_description;
 
 use crate::error::Result;
 use crate::gacha::kuro::kuro::fetch_kuro_gacha_records;
@@ -15,8 +16,8 @@ use async_trait::async_trait;
 use linkify::LinkFinder;
 use reqwest::Client as Reqwest;
 use serde::{Deserialize, Serialize};
-use time::OffsetDateTime;
-use tracing::info;
+use time::{OffsetDateTime, PrimitiveDateTime};
+use tracing::{debug, info};
 use url::Url;
 
 use super::kuro::{KuroGachaRecordFetcher, KuroGachaRecordFetcherChannel};
@@ -110,19 +111,33 @@ impl KuroGachaRecordFetcher for WutheringWavesGacha {
         uid: &str,
         gacha_url: &str,
         gacha_type: Option<&str>,
+        last_time: Option<&str>,
     ) -> Result<Option<Vec<Self::Target>>> {
         let response = fetch_kuro_gacha_records::<Vec<WutheringWavesGachaRecord>>(
             reqwest, ENDPOINT, gacha_url, gacha_type,
         )
         .await?;
 
-        println!("Ze data {:?}", response.data);
+        let format = format_description!("[year]-[month]-[day] [hour]:[minute]:[second]");
         let data = response.data.unwrap();
         let updata = data
             .iter()
+            .filter(|record| {
+                if let Some(last_time) = last_time {
+                    let now_odt = OffsetDateTime::now_utc();
+                    let now_pdt = PrimitiveDateTime::new(now_odt.date(), now_odt.time());
+
+                    let record_time =
+                        PrimitiveDateTime::parse(&record.time, &format).unwrap_or(now_pdt);
+                    let filter_time =
+                        PrimitiveDateTime::parse(last_time, &format).unwrap_or(now_pdt);
+                    return record_time > filter_time;
+                }
+
+                true
+            })
             .map(|record| {
                 let mut record = record.clone();
-                record.id = Some(String::from("1"));
                 record.uid = Some(String::from(uid));
                 record.gacha_type = gacha_type.map(str::to_string);
                 record

@@ -17,7 +17,7 @@ export default function GachaMenuItemImport() {
   const { facet, selectedAccount, alert } = useGachaLayoutContext();
   const { action } = resolveCurrency(facet);
   const [busy, setBusy] = React.useState(false);
-  const refetchGachaRecords = useRefetchGachaRecordsFn();
+  const refetchGachaRecords = useRefetchGachaRecordsFn(facet);
 
   const handleImportGachaRecords = React.useCallback(async () => {
     setBusy(true);

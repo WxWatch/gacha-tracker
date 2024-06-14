@@ -167,29 +167,12 @@ function computeKuroRecords(
     records,
     namedValues
   );
-  const gachaTypeToCategoryMappings = Object.values(namedValues).reduce(
-    (acc, prev) => {
-      acc[prev.gachaType] = prev.category;
-      return acc;
-    },
-    {} as KuroRecords["gachaTypeToCategoryMappings"]
-  );
-
-  console.log({
-    facet,
-    uid,
-    total,
-    gachaTypeToCategoryMappings,
-    recordsByGachaType,
-    namedValues,
-    aggregatedValues,
-  });
 
   return {
     facet,
     uid,
     total,
-    gachaTypeToCategoryMappings,
+    gachaTypeToCategoryMappings: KnownWutheringWavesGachaTypes,
     values: recordsByGachaType,
     namedValues,
     aggregatedValues,

@@ -19,12 +19,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import CachedIcon from "@mui/icons-material/Cached";
 
 export default function GachaActionFetch() {
-  const { selectedAccount, gachaRecords, alert } = useGachaLayoutContext();
+  const { facet, selectedAccount, gachaRecords, alert } =
+    useGachaLayoutContext();
   const { currentFragment, pull } = useGachaRecordsFetcher();
   const { action } = resolveCurrency(selectedAccount.facet);
   const updateAccountGachaUrl = useUpdateAccountGachaUrlFn();
   const updateAccountProperties = useUpdateAccountPropertiesFn();
-  const refetchGachaRecords = useRefetchGachaRecordsFn();
+  const refetchGachaRecords = useRefetchGachaRecordsFn(facet);
   const [{ busy }, produceState] = useImmer({
     busy: false,
   });

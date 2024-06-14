@@ -114,7 +114,7 @@ export default function GachaLayout(props: GachaLayoutProps) {
       <GachaToolbar
         facet={facet}
         ActionTabsProps={{
-          tabs: ["Overview", "Analysis", "Stats", "Catalog"],
+          tabs: ["Overview", "Analysis", "Stats"],
           value: tab,
           onChange: (_, newValue) =>
             produceState((draft) => {
@@ -127,7 +127,6 @@ export default function GachaLayout(props: GachaLayoutProps) {
           0: <GachaOverview />,
           1: <GachaAnalysis />,
           2: <GachaChart />,
-          3: <iframe src="https://wiki.hoyolab.com/pc/hsr/home" />,
         }[tab]
       }
     </GachaLayoutContext.Provider>
