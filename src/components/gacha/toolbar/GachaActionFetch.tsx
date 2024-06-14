@@ -46,7 +46,7 @@ export default function GachaActionFetch() {
     const { facet, uid, gachaUrl } = selectedAccount;
     try {
       const {
-        namedValues: { character, weapon, permanent, newbie },
+        namedValues: { character, weapon, permanent, beginner },
       } = gachaRecords;
       await pull(facet, uid, {
         gachaUrl,
