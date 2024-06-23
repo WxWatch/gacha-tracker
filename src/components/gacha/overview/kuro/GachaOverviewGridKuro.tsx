@@ -53,6 +53,12 @@ export default function GachaOverviewGridKuro() {
         </Box>
         // {/* </Grid> */}
       )}
+      {beginner.total === 0 || (
+        <Box>
+          <GachaOverviewCard facet={facet} value={beginner} />
+          <Divider />
+        </Box>
+      )}
       {/* <Grid xs={6} item> */}
       <Box>
         <GachaOverviewCard

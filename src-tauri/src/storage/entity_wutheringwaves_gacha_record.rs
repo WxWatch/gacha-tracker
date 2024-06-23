@@ -7,8 +7,8 @@ use sea_orm::ActiveValue;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "wutheringwaves_gacha_records")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    pub id: String,
+    #[sea_orm(primary_key, auto_increment = true)]
+    pub id: i32,
     #[sea_orm(indexed)]
     pub uid: String,
     #[sea_orm(indexed)]
@@ -32,7 +32,7 @@ impl ActiveModelBehavior for ActiveModel {}
 impl From<WutheringWavesGachaRecord> for ActiveModel {
     fn from(value: WutheringWavesGachaRecord) -> Self {
         Self {
-            id: ActiveValue::set(value.id.unwrap_or_default()),
+            id: ActiveValue::not_set(),
             uid: ActiveValue::set(value.uid.unwrap_or_default()),
             gacha_type: ActiveValue::set(value.gacha_type.unwrap_or_default()),
             card_pool_type: ActiveValue::set(value.card_pool_type),

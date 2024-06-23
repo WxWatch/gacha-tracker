@@ -84,8 +84,8 @@ pub struct StarRailGachaRecord {
 }
 
 impl GachaRecord for StarRailGachaRecord {
-    fn id(&self) -> &str {
-        &self.id
+    fn id(&self) -> String {
+        self.id.clone()
     }
 
     fn as_any(&self) -> &dyn Any {

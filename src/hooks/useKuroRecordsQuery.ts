@@ -184,24 +184,18 @@ function computeKuroRecords(
 const isRankTypeOfBlue = (record: KuroRecord) => record.qualityLevel === 3;
 const isRankTypeOfPurple = (record: KuroRecord) => record.qualityLevel === 4;
 const isRankTypeOfGolden = (record: KuroRecord) => record.qualityLevel === 5;
-const sortKuroRecordById = (a: KuroRecord, b: KuroRecord) =>
-  a.id.localeCompare(b.id);
+const sortKuroRecordById = (a: KuroRecord, b: KuroRecord) => {
+  console.log("ab", a, b);
+  return b.id - a.id;
+};
 
 function concatNamedKuroRecordsValues(
   facet: AccountFacet,
   values: KuroRecords["values"],
-  gachaType: KuroRecord["gacha_type"],
-  category: NamedKuroRecords["category"]
+  gachaTypes: Array<KuroRecord["gacha_type"]>
 ): KuroRecord[] {
-  const data = values[gachaType] || [];
-  if (facet === AccountFacet.Genshin && category === GachaCategory.Character) {
-    // HACK: Genshin Impact: 301 and 400 are the character gacha type
-    return Array.from(data)
-      .concat(values["400"] || [])
-      .sort(sortKuroRecordById);
-  } else {
-    return Array.from(data);
-  }
+  const data = gachaTypes.map((gachaType) => values[gachaType] || []).flat();
+  return Array.from(data).sort(sortKuroRecordById);
 }
 
 function computeNamedKuroRecords(
@@ -211,46 +205,56 @@ function computeNamedKuroRecords(
   const categories = KnownWutheringWavesGachaTypes;
   const { action: currencyAction } = resolveCurrency(facet);
 
-  return Object.entries(categories).reduce((acc, [gachaType, category]) => {
-    const categoryTitle =
-      KnownCategoryTitles[facet][category] + " " + currencyAction.singular;
-    const data = concatNamedKuroRecordsValues(
-      facet,
-      values,
-      gachaType,
-      category
-    );
-    const total = data.length;
-    const lastEndId = data[total - 1]?.id;
-    const firstTime = data[0]?.time;
-    const lastTime = data[total - 1]?.time;
-    const metadata: NamedKuroRecords["metadata"] = {
-      blue: computeKuroRecordsMetadata(total, data.filter(isRankTypeOfBlue)),
-      purple: computeAdvancedKuroRecordsMetadata(
-        facet,
-        data,
-        isRankTypeOfPurple
-      ),
-      golden: computeAdvancedKuroRecordsMetadata(
-        facet,
-        data,
-        isRankTypeOfGolden
-      ),
-    };
+  const combinedCategories = Object.entries(categories).reduce(
+    (acc, [gachaType, category]) => {
+      (acc[category] || (acc[category] = [])).push(gachaType);
+      return acc;
+    },
+    {} as Record<GachaCategory, Array<WutheringWavesGachaRecord["gacha_type"]>>
+  );
 
-    acc[category] = {
-      category,
-      categoryTitle,
-      gachaType,
-      lastEndId,
-      total,
-      firstTime,
-      lastTime,
-      values: data,
-      metadata,
-    };
-    return acc;
-  }, {} as KuroRecords["namedValues"]);
+  return Object.entries(combinedCategories).reduce(
+    (acc, [category, gachaTypes]) => {
+      const gachaCategory = category as GachaCategory;
+      const categoryTitle =
+        KnownCategoryTitles[facet][gachaCategory] +
+        " " +
+        currencyAction.singular;
+
+      const data = concatNamedKuroRecordsValues(facet, values, gachaTypes);
+      const total = data.length;
+      const lastEndId = data[total - 1]?.id;
+      const firstTime = data[0]?.time;
+      const lastTime = data[total - 1]?.time;
+      const metadata: NamedKuroRecords["metadata"] = {
+        blue: computeKuroRecordsMetadata(total, data.filter(isRankTypeOfBlue)),
+        purple: computeAdvancedKuroRecordsMetadata(
+          facet,
+          data,
+          isRankTypeOfPurple
+        ),
+        golden: computeAdvancedKuroRecordsMetadata(
+          facet,
+          data,
+          isRankTypeOfGolden
+        ),
+      };
+
+      acc[gachaCategory] = {
+        category: gachaCategory,
+        categoryTitle,
+        gachaType: _.first(gachaTypes) || "0",
+        lastEndId,
+        total,
+        firstTime,
+        lastTime,
+        values: data,
+        metadata,
+      };
+      return acc;
+    },
+    {} as KuroRecords["namedValues"]
+  );
 }
 
 function computeAggregatedKuroRecords(

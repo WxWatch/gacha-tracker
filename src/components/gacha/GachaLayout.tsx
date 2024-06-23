@@ -10,6 +10,7 @@ import GachaChart from "@/components/gacha/chart";
 import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import { AccountFacet } from "@/interfaces/account";
+import AccountMenu from "../account/AccountMenu";
 
 type GachaLayoutProps = {
   facet: AccountFacet;
@@ -42,11 +43,14 @@ export default function GachaLayout(props: GachaLayoutProps) {
     : null;
   if (!selectedAccount) {
     return (
-      <Typography color="error">
-        {Object.keys(accounts).length > 0
-          ? "There are currently no selected accounts. Please select an account first!"
-          : "There are no accounts available yet. Please add an account first!"}
-      </Typography>
+      <>
+        <Typography color="error">
+          {Object.keys(accounts).length > 0
+            ? "There are currently no selected accounts. Please select an account first!"
+            : "There are no accounts available yet. Please add an account first!"}
+        </Typography>
+        <AccountMenu />
+      </>
     );
   }
 

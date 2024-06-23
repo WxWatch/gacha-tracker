@@ -129,7 +129,7 @@ export function KuroItemView({
       key={item.id}
       name={item.name}
       id={`${item.resourceId}`}
-      isWeapon={item.resourceType === "Weapon"}
+      isWeapon={item.resourceType === "Weapons"}
       rank={`${item.qualityLevel}`}
       size={size}
     />
