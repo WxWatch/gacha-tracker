@@ -68,7 +68,7 @@ impl GachaUrlFinder for WutheringWavesGacha {
 /// Gacha Record
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 pub struct WutheringWavesGachaRecord {
-    pub id: Option<String>,
+    pub id: Option<i32>,
     pub uid: Option<String>,
     pub gacha_type: Option<String>,
     #[serde(rename = "cardPoolType")]
@@ -85,8 +85,8 @@ pub struct WutheringWavesGachaRecord {
 }
 
 impl GachaRecord for WutheringWavesGachaRecord {
-    fn id(&self) -> &str {
-        self.id.as_ref().unwrap()
+    fn id(&self) -> String {
+        self.id.unwrap().to_string()
     }
 
     fn as_any(&self) -> &dyn Any {

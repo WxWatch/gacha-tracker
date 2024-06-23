@@ -99,7 +99,7 @@ pub trait GachaRecordFetcherChannel<T: GachaRecord + Sized + Serialize + Send + 
                     let data = if let Some(last) = last_end_id {
                         let mut tmp = Vec::with_capacity(gacha_records.len());
                         for record in gacha_records {
-                            if last.cmp(record.id()).is_lt() {
+                            if last.cmp(record.id().as_str()).is_lt() {
                                 tmp.push(record);
                             } else {
                                 should_break = true;
