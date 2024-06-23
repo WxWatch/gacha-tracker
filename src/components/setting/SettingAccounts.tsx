@@ -1,3 +1,4 @@
+import React from "react";
 import { useAllAccounts } from "@/hooks/useAccount";
 import {
   Account,
@@ -13,7 +14,6 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
-import Paper from "@mui/material/Paper";
 
 export default function SettingAccounts() {
   const allAccounts = useAllAccounts();
@@ -41,8 +41,8 @@ function AccountSection({
   return (
     <Box>
       <Typography variant="body1">{resolveFacetName(facet)}</Typography>
-      {accounts.map((account) => (
-        <TableContainer>
+      {accounts.map((account, index) => (
+        <TableContainer key={index}>
           <Table>
             <TableHead>
               <TableRow>

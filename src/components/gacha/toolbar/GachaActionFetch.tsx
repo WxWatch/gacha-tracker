@@ -18,6 +18,7 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import CachedIcon from "@mui/icons-material/Cached";
 
+// TODO: remove this
 export default function GachaActionFetch() {
   const { facet, selectedAccount, gachaRecords, alert } =
     useGachaLayoutContext();
@@ -30,7 +31,7 @@ export default function GachaActionFetch() {
     busy: false,
   });
 
-  const [currentCategory, setCurrentCategory] = React.useState();
+  const [currentCategory, setCurrentCategory] = React.useState("");
   const [currentTotal, setCurrentTotal] = React.useState(0);
 
   const handleFetch = React.useCallback(async () => {
@@ -50,11 +51,11 @@ export default function GachaActionFetch() {
       } = gachaRecords;
       await pull(facet, uid, {
         gachaUrl,
-        gachaTypeAndLastEndIdMappings: {
+        gachaTypeAndLastQueryMappings: {
           [character.gachaType]: character.lastEndId ?? null,
           [weapon.gachaType]: weapon.lastEndId ?? null,
           [permanent.gachaType]: permanent.lastEndId ?? null,
-          [newbie.gachaType]: newbie.lastEndId ?? null,
+          [beginner.gachaType]: beginner.lastEndId ?? null,
         },
         eventChannel: "gachaRecords-fetcher-event-channel",
         saveToStorage: true,
@@ -105,7 +106,7 @@ export default function GachaActionFetch() {
       const categoryTitle = gachaRecords.namedValues[category].categoryTitle;
       setCurrentCategory(categoryTitle);
     } else if ("pagination" in currentFragment) {
-      const pagination = currentFragment.pagination;
+      // const pagination = currentFragment.pagination;
     } else if ("data" in currentFragment) {
       const data = currentFragment.data;
       setCurrentTotal(currentTotal + data.length);

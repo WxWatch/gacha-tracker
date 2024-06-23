@@ -98,8 +98,6 @@ export function MihoyoItemView({
   facet: AccountFacet;
   size?: number;
 }) {
-  console.log("beepo", { item });
-
   return (
     <GachaItemViewInternal
       facet={facet}
@@ -122,7 +120,6 @@ export function KuroItemView({
   facet: AccountFacet;
   size?: number;
 }) {
-  console.log("beepo", { item });
   return (
     <GachaItemViewInternal
       facet={facet}

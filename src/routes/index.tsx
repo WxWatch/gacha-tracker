@@ -10,7 +10,7 @@ import InfoIcon from "@mui/icons-material/InfoOutlined";
 
 export default function Index() {
   return (
-    <Layout title="Home">
+    <Layout>
       <Typography variant="h5">
         <MuiLink href={__APP_REPOSITORY__} target="_blank" rel="noreferrer">
           Gacha Tracker

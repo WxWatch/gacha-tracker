@@ -8,11 +8,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { AccountFacet, Account, resolveCurrency } from "@/interfaces/account";
-import {
-  GenshinGachaRecord,
-  StarRailGachaRecord,
-  WutheringWavesGachaRecord,
-} from "@/interfaces/gacha";
+import { WutheringWavesGachaRecord } from "@/interfaces/gacha";
 import PluginStorage from "@/utilities/plugin-storage";
 import * as _ from "lodash";
 import { GachaCategory, KnownCategoryTitles } from "./constants";
@@ -58,8 +54,8 @@ export interface NamedKuroRecords {
   category: GachaCategory;
   categoryTitle: string;
   gachaType: KuroRecord["gacha_type"];
-  lastEndId?: KuroRecord["id"];
   values: KuroRecord[];
+  lastEndId?: string; // TODO: remove this unnecessary
   total: number;
   firstTime?: KuroRecord["time"];
   lastTime?: KuroRecord["time"];
@@ -151,7 +147,6 @@ function computeKuroRecords(
   uid: Account["uid"],
   records: KuroRecord[]
 ): KuroRecords {
-  console.log("the datt", records);
   const total = records.length;
   const oldestTimestamp = _.first(records)?.time;
   const latestTimestamp = _.last(records)?.time;
@@ -185,7 +180,6 @@ const isRankTypeOfBlue = (record: KuroRecord) => record.qualityLevel === 3;
 const isRankTypeOfPurple = (record: KuroRecord) => record.qualityLevel === 4;
 const isRankTypeOfGolden = (record: KuroRecord) => record.qualityLevel === 5;
 const sortKuroRecordById = (a: KuroRecord, b: KuroRecord) => {
-  console.log("ab", a, b);
   return b.id - a.id;
 };
 
@@ -223,7 +217,6 @@ function computeNamedKuroRecords(
 
       const data = concatNamedKuroRecordsValues(facet, values, gachaTypes);
       const total = data.length;
-      const lastEndId = data[total - 1]?.id;
       const firstTime = data[0]?.time;
       const lastTime = data[total - 1]?.time;
       const metadata: NamedKuroRecords["metadata"] = {
@@ -244,7 +237,6 @@ function computeNamedKuroRecords(
         category: gachaCategory,
         categoryTitle,
         gachaType: _.first(gachaTypes) || "0",
-        lastEndId,
         total,
         firstTime,
         lastTime,
@@ -296,7 +288,6 @@ function computeAggregatedKuroRecords(
 
   const { purpleUsedPitySum } = purpleValues.reduce(
     (acc, record) => {
-      console.log("usedpity", record.usedPity);
       acc.purpleUsedPitySum += record.usedPity;
       return acc;
     },
@@ -328,7 +319,6 @@ function computeAggregatedKuroRecords(
       if (record.restricted) {
         acc.goldenSumRestricted += 1;
       }
-      console.log("usedpitgy", record.usedPity);
 
       acc.goldenUsedPitySum += record.usedPity;
       return acc;

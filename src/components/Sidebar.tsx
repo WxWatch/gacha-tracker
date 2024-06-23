@@ -2,7 +2,6 @@ import * as React from "react";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
@@ -89,10 +88,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -152,7 +147,7 @@ export default function Sidebar() {
         </DrawerHeader>
         <Divider />
         <List>
-          {[...Navs, NavSetting].map((nav, index) => (
+          {[...Navs, NavSetting].map((nav) => (
             <ListItem key={nav.title} disablePadding sx={{ display: "block" }}>
               <Tooltip title={nav.title} placement="right">
                 <ListItemButton

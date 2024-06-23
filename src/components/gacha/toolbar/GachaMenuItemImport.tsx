@@ -5,8 +5,6 @@ import { useGachaLayoutContext } from "@/components/gacha/GachaLayoutContext";
 import { useRefetchGachaRecordsFn } from "@/hooks/useGachaRecordsQuery";
 import PluginGacha from "@/utilities/plugin-gacha";
 import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
@@ -33,6 +31,7 @@ export default function GachaMenuItemImport() {
               [AccountFacet.Genshin]:
                 "UIGF (Unified Standardized GenshinData Format)",
               [AccountFacet.StarRail]: "SRGF (Star Rail GachaLog Format)",
+              [AccountFacet.WutheringWaves]: "",
             }[selectedAccount.facet],
           },
         ],

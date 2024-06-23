@@ -18,14 +18,12 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import CachedIcon from "@mui/icons-material/Cached";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { ArrowDropDown, DeleteOutline } from "@mui/icons-material";
-import IconButton from "@mui/material/IconButton";
+import { ArrowDropDown } from "@mui/icons-material";
 import Popper from "@mui/material/Popper";
 import Grow from "@mui/material/Grow";
 import Paper from "@mui/material/Paper";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import MenuList from "@mui/material/MenuList";
-import MenuItem from "@mui/material/MenuItem";
 import GachaMenuItemImport from "./GachaMenuItemImport";
 import GachaMenuItemExport from "./GachaMenuItemExport";
 import PluginGacha from "@/utilities/plugin-gacha";
@@ -59,7 +57,6 @@ export default function GachaActionUpdate() {
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   const handleMenuToggle = () => {
-    console.log("tawglgle", !menuOpen);
     setMenuOpen((prevOpen) => !prevOpen);
   };
 
@@ -182,65 +179,6 @@ export default function GachaActionUpdate() {
     produceState,
   ]);
 
-  const handleFetch = React.useCallback(async () => {
-    if (!selectedAccount.gachaUrl) {
-      alert("Link not available! Please try to read the link first.");
-      return;
-    }
-
-    produceState((draft) => {
-      draft.busy = true;
-    });
-
-    const { facet, uid, gachaUrl } = selectedAccount;
-    try {
-      const {
-        namedValues: { character, weapon, permanent, beginner },
-      } = gachaRecords;
-      await pull(facet, uid, {
-        gachaUrl,
-        gachaTypeAndLastQueryMappings: {
-          [character.gachaType]: character.lastEndId ?? null,
-          [weapon.gachaType]: weapon.lastEndId ?? null,
-          [permanent.gachaType]: permanent.lastEndId ?? null,
-          [beginner.gachaType]: beginner.lastEndId ?? null,
-        },
-        eventChannel: "gachaRecords-fetcher-event-channel",
-        saveToStorage: true,
-      });
-      await updateAccountProperties(facet, uid, {
-        ...selectedAccount.properties,
-        lastGachaUpdated: new Date().toISOString(),
-      });
-      await refetchGachaRecords(facet, uid);
-      alert(null, "Record updated successfully!");
-    } catch (e) {
-      // TODO: optimize error handling
-      const isTimeoutdGachaUrlError =
-        e && (e instanceof Error || typeof e === "object")
-          ? "identifier" in e && e.identifier === "TIMEOUTD_GACHA_URL"
-          : false;
-
-      if (isTimeoutdGachaUrlError) {
-        await updateAccountGachaUrl(facet, uid, null);
-      }
-      alert(e);
-    } finally {
-      produceState((draft) => {
-        draft.busy = false;
-      });
-    }
-  }, [
-    selectedAccount,
-    gachaRecords,
-    alert,
-    pull,
-    updateAccountGachaUrl,
-    updateAccountProperties,
-    refetchGachaRecords,
-    produceState,
-  ]);
-
   React.useEffect(() => {
     if (
       currentFragment === "idle" ||
@@ -251,11 +189,10 @@ export default function GachaActionUpdate() {
     } else if ("ready" in currentFragment) {
       const gachaType = currentFragment.ready;
       const category = gachaRecords.gachaTypeToCategoryMappings[gachaType];
-      console.log("gachaRecords", gachaRecords, category);
       const categoryTitle = gachaRecords.namedValues[category].categoryTitle;
       setCurrentCategory(categoryTitle);
     } else if ("pagination" in currentFragment) {
-      const pagination = currentFragment.pagination;
+      // const pagination = currentFragment.pagination;
     } else if ("data" in currentFragment) {
       const data = currentFragment.data;
       setCurrentTotal(currentTotal + data.length);

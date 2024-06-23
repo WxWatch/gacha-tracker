@@ -155,7 +155,6 @@ function computeMihoyoRecords(
   uid: Account["uid"],
   data: MihoyoRecord[]
 ): MihoyoRecords {
-  console.log("the datt", data);
   const total = data.length;
   const oldestTimestamp = _.first(data)?.time;
   const latestTimestamp = _.last(data)?.time;
@@ -305,7 +304,6 @@ function computeAggregatedMihoyoRecords(
 
   const { purpleUsedPitySum } = purpleValues.reduce(
     (acc, record) => {
-      console.log("usedpity", record.usedPity);
       acc.purpleUsedPitySum += record.usedPity;
       return acc;
     },
@@ -337,7 +335,6 @@ function computeAggregatedMihoyoRecords(
       if (record.restricted) {
         acc.goldenSumRestricted += 1;
       }
-      console.log("usedpitgy", record.usedPity);
 
       acc.goldenUsedPitySum += record.usedPity;
       return acc;

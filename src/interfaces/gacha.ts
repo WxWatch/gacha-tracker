@@ -29,8 +29,8 @@ export function getItemType(
   return "";
 }
 
-const isMihoyoRecord = (record: any): record is MihoyoRecord => true;
-const isKuroRecord = (record: any): record is KuroRecord => true;
+const isMihoyoRecord = (record: unknown): record is MihoyoRecord => true;
+const isKuroRecord = (record: unknown): record is KuroRecord => true;
 
 // See: src-tauri/src/gacha/impl_genshin.rs
 export interface GenshinGachaRecord {

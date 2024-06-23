@@ -2,28 +2,6 @@ import { Account, AccountFacet } from "@/interfaces/account";
 import PluginStorage, { AccountUid } from "@/utilities/plugin-storage";
 import { FetchQueryOptions, QueryKey, useQuery } from "@tanstack/react-query";
 
-export const useFacetedAccounts = (
-  facet: AccountFacet
-): FacetedAccounts | undefined => {
-  const query = createFacetedQuery(facet);
-  const response = useQuery({
-    ...query,
-    refetchOnWindowFocus: false,
-  });
-
-  return response.data;
-};
-
-export const useAllAccounts = (): AllAccounts | undefined => {
-  const query = createAllQuery();
-  const response = useQuery({
-    ...query,
-    refetchOnWindowFocus: false,
-  });
-
-  return response.data;
-};
-
 /// Local Storage
 const SelectedAccountUidKey = "selectedAccountUid";
 const LocalStorageSelectedAccountUid = Object.freeze({
@@ -53,6 +31,18 @@ export interface FacetedAccounts {
   readonly accounts: Map<AccountUid, Account>;
   readonly selectedAccountUid: AccountUid | null;
 }
+
+export const useFacetedAccounts = (
+  facet: AccountFacet
+): FacetedAccounts | undefined => {
+  const query = createFacetedQuery(facet);
+  const response = useQuery({
+    ...query,
+    refetchOnWindowFocus: false,
+  });
+
+  return response.data;
+};
 
 const facetedAccountQueryFn: FetchQueryOptions<FacetedAccounts>["queryFn"] =
   async (context) => {
@@ -106,22 +96,20 @@ export interface AllAccounts {
   readonly accounts: Map<AccountFacet, Account>;
 }
 
-const allAccountsQueryFn: FetchQueryOptions<AllAccounts>["queryFn"] = async (
-  context
-) => {
-  const accounts = (await PluginStorage.findAccounts()).reduce(
-    (acc, account) => {
-      console.log("da adccount", acc, account);
-      acc.set(account.facet, account);
-      return acc;
-    },
-    new Map() as AllAccounts["accounts"]
-  );
+const allAccountsQueryFn: FetchQueryOptions<AllAccounts>["queryFn"] =
+  async () => {
+    const accounts = (await PluginStorage.findAccounts()).reduce(
+      (acc, account) => {
+        acc.set(account.facet, account);
+        return acc;
+      },
+      new Map() as AllAccounts["accounts"]
+    );
 
-  return {
-    accounts,
-  } as AllAccounts;
-};
+    return {
+      accounts,
+    } as AllAccounts;
+  };
 
 function createAllQuery(): FetchQueryOptions<AllAccounts> & {
   queryKey: QueryKey;
@@ -132,3 +120,13 @@ function createAllQuery(): FetchQueryOptions<AllAccounts> & {
     staleTime: Infinity,
   };
 }
+
+export const useAllAccounts = (): AllAccounts | undefined => {
+  const query = createAllQuery();
+  const response = useQuery({
+    ...query,
+    refetchOnWindowFocus: false,
+  });
+
+  return response.data;
+};

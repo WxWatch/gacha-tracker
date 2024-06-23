@@ -1,14 +1,11 @@
 import React from "react";
-import { AccountFacet, resolveCurrency } from "@/interfaces/account";
+import { AccountFacet } from "@/interfaces/account";
 import { useGachaLayoutContext } from "@/components/gacha/GachaLayoutContext";
 import { SxProps, Theme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
-import CardHeader from "@mui/material/CardHeader";
-import CardContent from "@mui/material/CardContent";
 import GachaItemView from "../../GachaItemView";
 import Divider from "@mui/material/Divider";
 import {
@@ -75,68 +72,6 @@ export default function GachaOverviewGridKuro() {
   );
 }
 
-function GachaOverviewLast({
-  facet,
-  metadata,
-}: {
-  facet: AccountFacet;
-  metadata: AdvancedKuroRecordsMetadata;
-}) {
-  const last = metadata.values[metadata.values.length - 1];
-  const lastName = last ? last.name : "none";
-  return (
-    <Stack sx={{ gap: 1, flexBasis: "50%" }}>
-      <Card
-        sx={{
-          position: "relative",
-          textAlign: "center",
-          flexShrink: 1,
-        }}
-      >
-        <GachaItemView facet={facet} key={last.id} item={last} />
-
-        <Typography
-          variant="h6"
-          sx={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            bgcolor: "rgba(0, 0, 0, 0.5)",
-            color: "#efefef",
-            padding: "0 4px",
-          }}
-        >
-          {lastName}
-        </Typography>
-        <Typography
-          sx={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-            background: "rgba(0, 0, 0, 0.5)",
-            color: "#efefef",
-            borderBottomLeftRadius: "8px",
-            padding: "0 8px",
-          }}
-          variant="caption"
-        >
-          {`Last ${last.qualityLevel}★`}
-        </Typography>
-      </Card>
-      <Statistic
-        title={`${last.qualityLevel}★ Rate`}
-        statistic={metadata.sumPercentage}
-        suffix="%"
-      />
-      <Statistic
-        title={`Avg. wishes per ${last.qualityLevel}★`}
-        statistic={metadata.sumAverage}
-      />
-    </Stack>
-  );
-}
-
 const GachaOverviewGridCardSx: SxProps<Theme> = {
   gap: 2,
   position: "relative",
@@ -197,7 +132,6 @@ function Statistic({
 function GachaOverviewCard({
   facet,
   value,
-  newbie,
 }: {
   facet: AccountFacet;
   value: NamedKuroRecords | KuroRecords["aggregatedValues"];
@@ -207,13 +141,8 @@ function GachaOverviewCard({
     total,
     metadata: { golden, purple },
   } = value;
-  const { action } = resolveCurrency(facet);
-  const category = "category" in value ? value.category : "aggregated";
   const categoryTitle =
     "categoryTitle" in value ? value.categoryTitle : "Total";
-
-  const newbieGolden = newbie && newbie.metadata.golden.values[0];
-  const newbieGoldenName = newbieGolden && `${newbieGolden.name}`;
 
   if (total === 0) {
     return (

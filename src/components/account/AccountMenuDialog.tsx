@@ -386,6 +386,7 @@ function AccountMenuDialogForm(props: AccountMenuDialogFormProps) {
 const FacetGameDataDirExamples: Record<AccountFacet, string> = {
   [AccountFacet.Genshin]: "D:/Genshin Impact/Genshin Impact Game/YuanShen_Data",
   [AccountFacet.StarRail]: "D:/StarRail/Game/StarRail_Data",
+  [AccountFacet.WutheringWaves]: "D:/Wuthering Waves/Wuthering Waves Game/",
 };
 
 function numericOnly(evt: React.KeyboardEvent<HTMLElement>) {

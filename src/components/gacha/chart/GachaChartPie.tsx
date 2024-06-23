@@ -18,7 +18,6 @@ export default function GachaChartCalendar() {
   } = useGachaLayoutContext();
 
   const itemTypesData = aggregatedValues.values.reduce((acc, cur) => {
-    console.log("cur", cur);
     const key = getItemType(facet, cur);
     if (!acc[key]) {
       acc[key] = 1;

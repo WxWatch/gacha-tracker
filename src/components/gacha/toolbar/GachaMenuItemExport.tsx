@@ -1,19 +1,10 @@
 import React from "react";
 import { dialog } from "@tauri-apps/api";
-import { AccountFacet, resolveCurrency } from "@/interfaces/account";
+import { resolveCurrency } from "@/interfaces/account";
 import { useGachaLayoutContext } from "@/components/gacha/GachaLayoutContext";
 import PluginGacha from "@/utilities/plugin-gacha";
-import Box from "@mui/material/Box";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import AssistantIcon from "@mui/icons-material/Assistant";
 
 export default function GachaMenuItemExport() {
   const { facet, selectedAccount, alert } = useGachaLayoutContext();
