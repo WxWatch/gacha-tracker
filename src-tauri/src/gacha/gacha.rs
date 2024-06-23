@@ -14,7 +14,7 @@ pub trait GameDataDirectoryFinder {
 
 /// Gacha Record
 pub trait GachaRecord: Any {
-    fn id(&self) -> &str;
+    fn id(&self) -> String;
     fn as_any(&self) -> &dyn Any;
 }
 

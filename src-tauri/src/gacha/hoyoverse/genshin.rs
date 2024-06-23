@@ -75,8 +75,8 @@ pub struct GenshinGachaRecord {
 }
 
 impl GachaRecord for GenshinGachaRecord {
-    fn id(&self) -> &str {
-        &self.id
+    fn id(&self) -> String {
+        self.id.clone()
     }
 
     fn as_any(&self) -> &dyn Any {
