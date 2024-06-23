@@ -24,6 +24,6 @@ export function lookupAssetIcon(
   category: "character" | "weapon",
   id: string
 ): string | undefined {
-  const path = `/src/assets/images/${extensions[facet].gameName}/${category}/${id}${extensions[facet][category]}`;
+  const path = `/images/${extensions[facet].gameName}/${category}/${id}${extensions[facet][category]}`;
   return path;
 }
