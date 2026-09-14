@@ -9,6 +9,7 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import dayjs from "@/utilities/dayjs";
 import { getRankType } from "@/interfaces/gacha";
+import { borderRadius, spacing, elevation } from "@/theme/tokens";
 
 export default function GachaChartCalendar() {
   const {
@@ -17,6 +18,7 @@ export default function GachaChartCalendar() {
   } = useGachaLayoutContext();
   const { action: currencyAction } = resolveCurrency(facet);
 
+  // Build calendar data - track highest rarity per day
   const calendars = Object.entries(
     aggregatedValues.values.reduce((acc, cur) => {
       const key = dayjs(cur.time).format("YYYY-MM-DD");
@@ -32,6 +34,7 @@ export default function GachaChartCalendar() {
     return acc;
   }, [] as CalendarDatum[]);
 
+  // Build detailed metadata by day
   const metadataByDay: Record<
     string,
     { total: number; golden: number; purple: number; blue: number }
@@ -56,112 +59,193 @@ export default function GachaChartCalendar() {
 
   const now = dayjs();
   const from = dayjs(aggregatedValues.firstTime);
-  // const from = now.subtract(1, "year");
-
-  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const theme = useTheme();
 
+  // Calculate some statistics
+  const totalDays = calendars.length;
+  const daysWithGolden = Object.values(metadataByDay).filter((d) => d.golden > 0).length;
+  const avgPullsPerDay =
+    totalDays > 0 ? (aggregatedValues.total / totalDays).toFixed(1) : "0";
+
   return (
-    <Stack direction="column" gap={2}>
-      <Typography
-        variant="h6"
-        gutterBottom
-      >{`❖ ${currencyAction.singular} Calendar`}</Typography>
-      <Box ref={containerRef} position="relative" width="100%" height={220}>
-        <ResponsiveTimeRange
-          data={calendars}
-          from={from.toDate()}
-          to={now.toDate()}
-          dayBorderWidth={0}
-          dayRadius={99}
-          daySpacing={2.5}
-          minValue={3}
-          maxValue={5}
-          emptyColor="#eeeeee"
-          colors={["#bbdefb", "#9c27b0", "#ffa726"]}
-          margin={{ top: 32, right: 64, bottom: 0, left: 16 }}
-          weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
-          weekdayLegendOffset={64}
-          firstWeekday="sunday"
-          monthLegendPosition="before"
-          monthLegendOffset={12}
-          theme={{
-            fontFamily: "inherit",
-            // fontSize: 14,
-            tooltip: {
-              // See: https://github.com/plouc/nivo/blob/0f0a926627c370f4ae0ca435a91573a16d96affc/packages/tooltip/src/TooltipWrapper.tsx#L79-L83
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              zIndex: theme.zIndex.drawer + 1,
-            },
+    <Stack spacing={`${spacing.xl}px`}>
+      <Typography variant="h6" fontWeight={700}>
+        ❖ {currencyAction.singular} Activity Calendar
+      </Typography>
+
+      {/* Statistics Cards */}
+      <Stack direction="row" spacing={2} flexWrap="wrap">
+        <Box
+          sx={{
+            p: `${spacing.md}px`,
+            bgcolor: "background.paper",
+            borderRadius: `${borderRadius.lg}px`,
+            boxShadow: elevation[1],
+            border: "1px solid",
+            borderColor: "grey.200",
+            minWidth: 140,
+            textAlign: "center",
           }}
-          tooltip={({ color, day }) => (
-            <Box
-              component={Paper}
-              position="absolute"
-              bgcolor="#efefef"
-              width={120}
-              top={0}
-              right="0.5rem"
-              paddingY={0.5}
-              paddingX={1}
-              elevation={5}
-            >
-              <Box display="flex" alignItems="center">
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: 14,
-                    height: 14,
-                    borderRadius: 10,
-                    backgroundColor: color,
-                    marginRight: 8,
-                  }}
-                />
-                <Typography component="span" variant="button">
-                  {day}
-                </Typography>
+        >
+          <Typography variant="caption" color="text.secondary">
+            Active Days
+          </Typography>
+          <Typography variant="h5" fontWeight={700} color="primary.main">
+            {totalDays}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            p: `${spacing.md}px`,
+            bgcolor: "background.paper",
+            borderRadius: `${borderRadius.lg}px`,
+            boxShadow: elevation[1],
+            border: "1px solid",
+            borderColor: "#d2ad70",
+            minWidth: 140,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="caption" color="text.secondary">
+            Lucky Days (5★)
+          </Typography>
+          <Typography variant="h5" fontWeight={700} sx={{ color: "#d2ad70" }}>
+            {daysWithGolden}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            p: `${spacing.md}px`,
+            bgcolor: "background.paper",
+            borderRadius: `${borderRadius.lg}px`,
+            boxShadow: elevation[1],
+            border: "1px solid",
+            borderColor: "grey.200",
+            minWidth: 140,
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="caption" color="text.secondary">
+            Avg Pulls/Day
+          </Typography>
+          <Typography variant="h5" fontWeight={700} color="primary.main">
+            {avgPullsPerDay}
+          </Typography>
+        </Box>
+      </Stack>
+
+      {/* Calendar Visualization */}
+      <Box
+        sx={{
+          p: `${spacing.md}px`,
+          bgcolor: "background.paper",
+          borderRadius: `${borderRadius.lg}px`,
+          boxShadow: elevation[1],
+          border: "1px solid",
+          borderColor: "grey.200",
+        }}
+      >
+        <Typography variant="subtitle1" fontWeight={600} sx={{ mb: `${spacing.md}px` }}>
+          Pull Activity Heatmap
+        </Typography>
+        <Typography variant="caption" color="text.secondary" sx={{ mb: `${spacing.lg}px`, display: "block" }}>
+          Each cell represents a day. Color intensity shows the highest rarity pulled that day.
+        </Typography>
+        <Box position="relative" width="100%" height={220}>
+          <ResponsiveTimeRange
+            data={calendars}
+            from={from.toDate()}
+            to={now.toDate()}
+            dayBorderWidth={1}
+            dayBorderColor="#ffffff"
+            dayRadius={4}
+            daySpacing={3}
+            minValue={3}
+            maxValue={5}
+            emptyColor="#f5f5f5"
+            colors={["#4d80c8", "#9061d2", "#d2ad70"]} // 3★ blue, 4★ purple, 5★ gold
+            margin={{ top: 32, right: 64, bottom: 0, left: 16 }}
+            weekdayTicks={[0, 1, 2, 3, 4, 5, 6]}
+            weekdayLegendOffset={64}
+            firstWeekday="sunday"
+            monthLegendPosition="before"
+            monthLegendOffset={12}
+            theme={{
+              fontFamily: "inherit",
+              fontSize: 12,
+              tooltip: {
+                // @ts-ignore
+                zIndex: theme.zIndex.drawer + 1,
+              },
+              text: {
+                fill: "#666",
+              },
+            }}
+            tooltip={({ color, day }) => (
+              <Box
+                component={Paper}
+                sx={{
+                  bgcolor: "background.paper",
+                  p: `${spacing.sm}px`,
+                  borderRadius: `${borderRadius.md}px`,
+                  boxShadow: elevation[3],
+                  border: "1px solid",
+                  borderColor: "grey.300",
+                  minWidth: 140,
+                }}
+                elevation={5}
+              >
+                <Box display="flex" alignItems="center" mb={0.5}>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: 12,
+                      height: 12,
+                      borderRadius: 3,
+                      backgroundColor: color,
+                      marginRight: 8,
+                    }}
+                  />
+                  <Typography variant="body2" fontWeight={600}>
+                    {dayjs(day).format("MMM D, YYYY")}
+                  </Typography>
+                </Box>
+                <Box sx={{ pl: 2.5 }}>
+                  <Typography variant="body2" color="text.primary">
+                    Total: <strong>{metadataByDay[day]?.total || 0}</strong>
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#d2ad70" }}>
+                    5★: {metadataByDay[day]?.golden || 0}
+                  </Typography>
+                  {" · "}
+                  <Typography variant="caption" sx={{ color: "#9061d2" }}>
+                    4★: {metadataByDay[day]?.purple || 0}
+                  </Typography>
+                  {" · "}
+                  <Typography variant="caption" sx={{ color: "#4d80c8" }}>
+                    3★: {metadataByDay[day]?.blue || 0}
+                  </Typography>
+                </Box>
               </Box>
-              <Box>
-                <Typography component="p" variant="button">
-                  {`Total：${metadataByDay[day]?.total || 0}`}
-                </Typography>
-                <Typography
-                  component="p"
-                  variant="caption"
-                  color="warning.main"
-                >
-                  {`5★：${metadataByDay[day]?.golden || 0}`}
-                </Typography>
-                <Typography
-                  component="p"
-                  variant="caption"
-                  color="secondary.main"
-                >
-                  {`4★: ${metadataByDay[day]?.purple || 0}`}
-                </Typography>
-                <Typography component="p" variant="caption" color="info.main">
-                  {`3★：${metadataByDay[day]?.blue || 0}`}
-                </Typography>
-              </Box>
-            </Box>
-          )}
-          legendFormat={(value) => `${value}★`}
-          legends={[
-            {
-              anchor: "bottom",
-              direction: "row",
-              itemCount: 2,
-              itemHeight: 20,
-              itemsSpacing: 48,
-              itemWidth: 48,
-              translateX: 0,
-              translateY: -48,
-              symbolShape: "circle",
-            },
-          ]}
-        />
+            )}
+            legendFormat={(value) => `${value}★`}
+            legends={[
+              {
+                anchor: "bottom-right",
+                direction: "row",
+                itemCount: 3,
+                itemHeight: 20,
+                itemsSpacing: 12,
+                itemWidth: 42,
+                translateX: -20,
+                translateY: -32,
+                symbolShape: "circle",
+                symbolSize: 10,
+              },
+            ]}
+          />
+        </Box>
       </Box>
     </Stack>
   );

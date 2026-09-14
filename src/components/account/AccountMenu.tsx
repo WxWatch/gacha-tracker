@@ -17,6 +17,7 @@ export default function AccountMenu() {
     ? accounts[selectedAccountUid]
     : null;
   const displayName = resolveAccountDisplayName(selectedAccount);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [{ drawer, dialog }, produceState] = useImmer({
     drawer: false,
     dialog: {
@@ -28,11 +29,12 @@ export default function AccountMenu() {
   return (
     <React.Fragment>
       <Button
-        onClick={() =>
+        onClick={(e) => {
+          setAnchorEl(e.currentTarget);
           produceState((draft) => {
             draft.drawer = true;
-          })
-        }
+          });
+        }}
       >
         <AccountAvatar facet={facet} />
         <Stack direction="column" marginX={1} textAlign="left">
@@ -47,13 +49,15 @@ export default function AccountMenu() {
       <AccountMenuDrawer
         title="Account Management"
         open={drawer}
+        anchorEl={anchorEl}
         accounts={accounts}
         selectedAccountUid={selectedAccountUid}
-        onClose={() =>
+        onClose={() => {
+          setAnchorEl(null);
           produceState((draft) => {
             draft.drawer = false;
-          })
-        }
+          });
+        }}
         onClickAddAccount={() => {
           produceState((draft) => {
             draft.dialog = { open: true, editAccountUid: undefined };

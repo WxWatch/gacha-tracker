@@ -99,7 +99,6 @@ function GachaAnalysisHistoryList({
     >
       <Box className={`${GachaAnalysisHistoryListCls}-title`}>
         <Typography>{categoryTitle}</Typography>
-        {/* <Typography variant="body2">{records.sum}</Typography> */}
       </Box>
       <Divider orientation="horizontal" variant="fullWidth" />
       <Stack className={`${GachaAnalysisHistoryListCls}-items`}>
@@ -107,14 +106,35 @@ function GachaAnalysisHistoryList({
           <Typography sx={{ color: "#7f7f7f" }}>No records found</Typography>
         ) : (
           records.values.map((item) => (
-            <GachaItemView
-              facet={facet}
+            <Stack
               key={item.id}
-              item={item}
-              size={GachaAnalysisHistoryItemViewSize}
-              // usedPity={item.usedPity}
-              // restricted={item.restricted}
-            />
+              sx={{
+                alignItems: "center",
+                gap: 0.5,
+                maxWidth: GachaAnalysisHistoryItemViewSize,
+              }}
+            >
+              <GachaItemView
+                facet={facet}
+                item={item}
+                size={GachaAnalysisHistoryItemViewSize}
+                usedPity={item.usedPity}
+              />
+              <Typography
+                variant="caption"
+                sx={{
+                  textAlign: "center",
+                  fontSize: "0.7rem",
+                  lineHeight: 1.2,
+                  fontWeight: 500,
+                  color: "text.secondary",
+                  wordBreak: "break-word",
+                  width: "100%",
+                }}
+              >
+                {item.name}
+              </Typography>
+            </Stack>
           ))
         )}
       </Stack>

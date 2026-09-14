@@ -17,6 +17,7 @@ import Backdrop from "@mui/material/Backdrop";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import CachedIcon from "@mui/icons-material/Cached";
+import { borderRadius, spacing } from "@/theme/tokens";
 
 // TODO: remove this
 export default function GachaActionFetch() {
@@ -164,26 +165,56 @@ export default function GachaActionFetch() {
         startIcon={<CachedIcon />}
         onClick={handleFetch}
         disabled={busy}
+        sx={{
+          borderRadius: `${borderRadius.md}px`,
+          textTransform: "none",
+          fontWeight: 600,
+          px: `${spacing.md}px`,
+        }}
       >
-        {`Update`}
+        {`Update ${action.plural}`}
       </Button>
       {busy && (
         <Backdrop
           open={busy}
           sx={{
             zIndex: (theme) => theme.zIndex.drawer + 1,
-            bgcolor: "rgba(0, 0, 0, 0.75)",
-            color: "#efefef",
+            bgcolor: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(8px)",
+            color: "#fff",
           }}
         >
-          <Box display="flex" flexDirection="column" alignItems="center">
-            <CircularProgress color="info" />
-            <Typography variant="h6" color="#efefef" sx={{ marginTop: 2 }}>
-              {`Retrieving latest ${action.plural.toLocaleLowerCase()}...`}
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            sx={{
+              bgcolor: "rgba(255, 255, 255, 0.05)",
+              borderRadius: `${borderRadius.xl}px`,
+              p: `${spacing.xl}px`,
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              minWidth: 320,
+            }}
+          >
+            <CircularProgress
+              size={56}
+              thickness={4}
+              sx={{ color: "primary.light" }}
+            />
+            <Typography
+              variant="h6"
+              fontWeight={700}
+              sx={{ mt: `${spacing.lg}px`, color: "#fff" }}
+            >
+              {`Retrieving latest ${action.plural.toLowerCase()}...`}
             </Typography>
             <Typography
-              variant="body1"
-              sx={{ marginTop: 1, textAlign: "center" }}
+              variant="body2"
+              sx={{
+                mt: `${spacing.sm}px`,
+                textAlign: "center",
+                color: "rgba(255, 255, 255, 0.8)",
+              }}
             >
               {stringifyFragment(gachaRecords, currentFragment)}
             </Typography>

@@ -27,6 +27,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 import PanToolAltIcon from "@mui/icons-material/PanToolAlt";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { borderRadius, spacing } from "@/theme/tokens";
 
 export interface AccountMenuDialogProps {
   mode: "add" | "edit";
@@ -58,17 +59,32 @@ export default function AccountMenuDialog(props: AccountMenuDialogProps) {
 
   const id = "account-menu-dialog-form";
   return (
-    <Dialog open={open} maxWidth="xs" fullWidth>
-      <DialogTitle display="flex" alignItems="center">
-        {mode === "add" ? "Add Account" : "Edit Account"}
+    <Dialog
+      open={open}
+      maxWidth="xs"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: `${borderRadius.xl}px`,
+        },
+      }}
+    >
+      <DialogTitle
+        display="flex"
+        alignItems="center"
+        sx={{ pb: `${spacing.sm}px` }}
+      >
+        <Typography variant="h6" fontWeight={700}>
+          {mode === "add" ? "Add Account" : "Edit Account"}
+        </Typography>
         {mode === "edit" && (
           <Tooltip
             placement="left"
             title={
               <React.Fragment>
-                <Typography variant="body1">Delete Account</Typography>
+                <Typography variant="body2">Delete Account</Typography>
                 <Typography variant="caption">
-                  Note: Stored data will not be cleard for this account.
+                  Note: Stored data will not be cleared for this account.
                 </Typography>
               </React.Fragment>
             }
@@ -79,6 +95,7 @@ export default function AccountMenuDialog(props: AccountMenuDialogProps) {
                 color="error"
                 onClick={handleDeleteAccount}
                 disabled={busy}
+                size="small"
               >
                 <DeleteIcon />
               </IconButton>
@@ -86,7 +103,7 @@ export default function AccountMenuDialog(props: AccountMenuDialogProps) {
           </Tooltip>
         )}
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers sx={{ py: `${spacing.lg}px` }}>
         <AccountMenuDialogForm
           id={id}
           mode={mode}
@@ -98,12 +115,38 @@ export default function AccountMenuDialog(props: AccountMenuDialogProps) {
           onSuccess={onClose}
         />
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="error" disabled={busy}>
+      <DialogActions
+        sx={{
+          px: `${spacing.lg}px`,
+          py: `${spacing.md}px`,
+          gap: `${spacing.sm}px`,
+        }}
+      >
+        <Button
+          onClick={onClose}
+          disabled={busy}
+          variant="outlined"
+          color="inherit"
+          sx={{
+            borderRadius: `${borderRadius.md}px`,
+            textTransform: "none",
+            fontWeight: 600,
+          }}
+        >
           Cancel
         </Button>
-        <Button type="submit" form={id} disabled={busy}>
-          Confirm
+        <Button
+          type="submit"
+          form={id}
+          disabled={busy}
+          variant="contained"
+          sx={{
+            borderRadius: `${borderRadius.md}px`,
+            textTransform: "none",
+            fontWeight: 600,
+          }}
+        >
+          {mode === "add" ? "Add Account" : "Save Changes"}
         </Button>
       </DialogActions>
     </Dialog>
@@ -149,10 +192,10 @@ function AccountMenuDialogForm(props: AccountMenuDialogFormProps) {
   } = useForm<IFormInput>({
     values: editAccount
       ? {
-          uid: editAccount.uid,
-          gameDataDir: editAccount.gameDataDir,
-          displayName: editAccount.properties?.displayName ?? undefined,
-        }
+        uid: editAccount.uid,
+        gameDataDir: editAccount.gameDataDir,
+        displayName: editAccount.properties?.displayName ?? undefined,
+      }
       : undefined,
   });
 
@@ -365,6 +408,11 @@ function AccountMenuDialogForm(props: AccountMenuDialogFormProps) {
           startIcon={<GpsFixedIcon />}
           onClick={handleGameDataDirAutoFind}
           disabled={busy}
+          sx={{
+            borderRadius: `${borderRadius.md}px`,
+            textTransform: "none",
+            fontWeight: 600,
+          }}
         >
           Auto Search
         </Button>
@@ -375,6 +423,11 @@ function AccountMenuDialogForm(props: AccountMenuDialogFormProps) {
           startIcon={<PanToolAltIcon />}
           onClick={handleGameDataDirManualOpen}
           disabled={busy}
+          sx={{
+            borderRadius: `${borderRadius.md}px`,
+            textTransform: "none",
+            fontWeight: 600,
+          }}
         >
           Manual Selection
         </Button>

@@ -1,20 +1,22 @@
 import React from "react";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { enUS } from "@mui/material/locale";
+import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
+import { AccountFacet } from "@/interfaces/account";
+import { ThemeContextProvider, useGameTheme } from "@/theme/ThemeContext";
 import "@/assets/global.css";
 
-const baseTheme = {
-  typography: {
-    fontFamily: "汉仪文黑-85W",
-    fontSize: 14,
-  },
-};
+interface ThemeProps extends React.PropsWithChildren {
+  facet?: AccountFacet;
+}
 
-const theme = createTheme(baseTheme, enUS);
+/**
+ * Inner Theme Component
+ * Provides MUI ThemeProvider with the active game theme
+ */
+function InnerTheme(props: React.PropsWithChildren) {
+  const theme = useGameTheme();
 
-export default function Theme(props: React.PropsWithChildren) {
   return (
     <ThemeProvider theme={theme}>
       <Box display="flex">
@@ -25,17 +27,15 @@ export default function Theme(props: React.PropsWithChildren) {
   );
 }
 
-// const genshinTheme = createTheme(
-//   {
-//     ...baseTheme,
-//     palette: {
-//       primary: {
-//         main: "#eddbbb", // Paimon Gold
-//       },
-//       secondary: {
-//         main: "#011138", // Paimon Blue
-//       },
-//     },
-//   },
-//   enUS
-// );
+/**
+ * Theme Component
+ * Main theme wrapper that provides both ThemeContext and MUI ThemeProvider
+ * @param facet - The game facet to determine which theme to apply
+ */
+export default function Theme({ facet, children }: ThemeProps) {
+  return (
+    <ThemeContextProvider facet={facet}>
+      <InnerTheme>{children}</InnerTheme>
+    </ThemeContextProvider>
+  );
+}

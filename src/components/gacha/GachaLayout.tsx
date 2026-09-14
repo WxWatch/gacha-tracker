@@ -8,9 +8,15 @@ import GachaOverview from "@/components/gacha/overview";
 import GachaAnalysis from "@/components/gacha/analysis";
 import GachaChart from "@/components/gacha/chart";
 import Alert from "@mui/material/Alert";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { AccountFacet } from "@/interfaces/account";
 import AccountMenu from "../account/AccountMenu";
+import { borderRadius, spacing } from "@/theme/tokens";
 
 type GachaLayoutProps = {
   facet: AccountFacet;
@@ -31,9 +37,9 @@ export default function GachaLayout(props: GachaLayoutProps) {
     tab: 0,
     alert: undefined as
       | {
-          severity: "success" | "error";
-          message: string;
-        }
+        severity: "success" | "error";
+        message: string;
+      }
       | undefined,
   });
 
@@ -104,16 +110,58 @@ export default function GachaLayout(props: GachaLayoutProps) {
       }}
     >
       {alert && (
-        <Alert
-          severity={alert.severity}
+        <Dialog
+          open={Boolean(alert)}
           onClose={() =>
             produceState((draft) => {
               draft.alert = undefined;
             })
           }
+          PaperProps={{
+            sx: {
+              borderRadius: `${borderRadius.xl}px`,
+              minWidth: 400,
+            },
+          }}
         >
-          {alert?.message}
-        </Alert>
+          <DialogTitle
+            sx={{
+              pb: `${spacing.sm}px`,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6" fontWeight={700}>
+              {alert.severity === "error" ? "Error" : "Success"}
+            </Typography>
+          </DialogTitle>
+          <DialogContent sx={{ py: `${spacing.lg}px` }}>
+            <Typography variant="body1">{alert.message}</Typography>
+          </DialogContent>
+          <DialogActions
+            sx={{
+              px: `${spacing.lg}px`,
+              py: `${spacing.md}px`,
+            }}
+          >
+            <Button
+              onClick={() =>
+                produceState((draft) => {
+                  draft.alert = undefined;
+                })
+              }
+              variant="contained"
+              color={alert.severity === "error" ? "error" : "primary"}
+              sx={{
+                borderRadius: `${borderRadius.md}px`,
+                textTransform: "none",
+                fontWeight: 600,
+              }}
+            >
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
       <GachaToolbar
         facet={facet}
